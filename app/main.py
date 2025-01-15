@@ -29,7 +29,7 @@ def main():
         if c == "{":
             print("LEFT_BRACE { null")
         if c == "}":
-            print("RIGHT_PAREN } null")
+            print("RIGHT_BRACE } null")
     print("EOF  null")
 
 if __name__ == "__main__":
