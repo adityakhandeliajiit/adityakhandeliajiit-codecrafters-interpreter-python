@@ -19,12 +19,12 @@ def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
     print("Logs from your program will appear here!", file=sys.stderr)
 
-    for c in file_contents:
-        if c == "(":
-            print("LEFT_PAREN ( null")
-        if c == ")":
-            print("RIGHT_PAREN ) null")
-    print("EOF  null")
+    # for c in file_contents:
+    #     if c == "(":
+    #         print("LEFT_PAREN ( null")
+    #     if c == ")":
+    #         print("RIGHT_PAREN ) null")
+    # print("EOF  null")
     for c in file_contents:
         if c == "{":
             print("LEFT_BRACE { null")
@@ -34,3 +34,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
