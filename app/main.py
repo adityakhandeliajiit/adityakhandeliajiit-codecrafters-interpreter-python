@@ -47,11 +47,12 @@ def main():
                 "[line %s] Error: Unexpected character: %s" % (line_number,x),
                 file=sys.stderr,
             )
+    print("EOF  null")        
     if error:
         exit(65)
     else:
         exit(0)                  
-    print("EOF  null")
+    
 if __name__ == "__main__":
     main()
 
