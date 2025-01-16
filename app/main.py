@@ -19,21 +19,51 @@ def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
     print("Logs from your program will appear here!", file=sys.stderr)
 
-    # for c in file_contents:
-    #     if c == "(":
+    # for x in file_contents:
+    #     if x == "(":
     #         print("LEFT_PAREN ( null")
-    #     if c == ")":
+    #     elif x == ")":
     #         print("RIGHT_PAREN ) null")
+    #     elif x == "{":
+    #         print("LEFT_BRACE { null")
+    #     elif x == "}":
+    #         print("RIGHT_BRACE } null")
+    #     elif x == "*":
+    #         print("STAR * null")
+    #     elif x == ".":
+    #         print("DOT . null")
+    #     elif x == ",":
+    #         print("COMMA , null")
+    #     elif x == "+":
+    #         print("PLUS + null")
     # print("EOF  null")
-    for x in file_contents:
-        if x == "(":
-            print("LEFT_PAREN ( null")
-        elif x == ")":
-            print("RIGHT_PAREN ) null")
-        elif x == "{":
-            print("LEFT_BRACE { null")
-        elif x == "}":
-            print("RIGHT_BRACE } null")
+    for line in file_contents:
+            for char in line:
+                match char:
+                    case "(":
+                        token = "LEFT_PAREN"
+                    case ")":
+                        token = "RIGHT_PAREN"
+                    case "{":
+                        token = "LEFT_BRACE"
+                    case "}":
+                        token = "RIGHT_BRACE"
+                    case ",":
+                        token = "COMMA"
+                    case ".":
+                        token = "DOT"
+                    case "-":
+                        token = "MINUS"
+                    case "+":
+                        token = "PLUS"
+                    case ";":
+                        token = "SEMICOLON"
+                    case "*":
+                        token = "STAR"
+                    case _:
+                        continue
+                        # token = ""
+                print(f"{token} {char} null")
     print("EOF  null")
 
 
