@@ -39,38 +39,10 @@ def main():
         elif x=="-":
             print("MINUS - null")
         elif x==";":
-            print("SEMICOLON ; null")    
+            print("SEMICOLON ; null")
+        else:
+            print(f"[line 1] Error: Unexpected character: {x}")        
     print("EOF  null")
-    # for line in file_contents:
-    #         for char in line:
-    #             match char:
-    #                 case "(":
-    #                     token = "LEFT_PAREN"
-    #                 case ")":
-    #                     token = "RIGHT_PAREN"
-    #                 case "{":
-    #                     token = "LEFT_BRACE"
-    #                 case "}":
-    #                     token = "RIGHT_BRACE"
-    #                 case ",":
-    #                     token = "COMMA"
-    #                 case ".":
-    #                     token = "DOT"
-    #                 case "-":
-    #                     token = "MINUS"
-    #                 case "+":
-    #                     token = "PLUS"
-    #                 case ";":
-    #                     token = "SEMICOLON"
-    #                 case "*":
-    #                     token = "STAR"
-    #                 case _:
-    #                     continue
-    #                     # token = ""
-    #             print(f"{token} {char} null")
-    # print("EOF  null")
-
-
 if __name__ == "__main__":
     main()
 
