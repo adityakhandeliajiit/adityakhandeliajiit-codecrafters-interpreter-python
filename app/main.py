@@ -42,6 +42,7 @@ def main():
             print("SEMICOLON ; null")
         else:
             sys.stderr.write(f"[line 1] Error: Unexpected Error: {x}")
+            # sys.stderr.write(f"[line 1] Error: Unexpected Error: {x}")
             sys.exit(65)
                   
     print("EOF  null")
