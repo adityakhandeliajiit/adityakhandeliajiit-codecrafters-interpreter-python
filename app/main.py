@@ -18,7 +18,7 @@ def main():
 
     # You can use print statements as follows for debugging, they'll be visible when running tests.
     print("Logs from your program will appear here!", file=sys.stderr)
-
+    error=False
     for x in file_contents:
         if x == "(":
             print("LEFT_PAREN ( null")
@@ -41,10 +41,16 @@ def main():
         elif x==";":
             print("SEMICOLON ; null")
         else:
-            sys.stderr.write(f"[line 1] Error: Unexpected Error: {x}")
-            # sys.stderr.write(f"[line 1] Error: Unexpected Error: {x}")
-            sys.exit(65)
-                  
+            error = True
+            line_number = file_contents.count("\n", 0, file_contents.find(x)) + 1
+            print(
+                "[line %s] Error: Unexpected character: %s" % (line_number,x),
+                file=sys.stderr,
+            )
+    if error:
+        exit(65)
+    else:
+        exit(0)                  
     print("EOF  null")
 if __name__ == "__main__":
     main()
