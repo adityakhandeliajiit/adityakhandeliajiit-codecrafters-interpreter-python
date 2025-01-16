@@ -41,7 +41,7 @@ def main():
         elif x==";":
             print("SEMICOLON ; null")
         else:
-            print(f"[line 1] Error: Unexpected character: {x}") 
+            sys.stderr.write(f"[line 1] Error: Unexpected Error: {x}")
             sys.exit(65)
                   
     print("EOF  null")
