@@ -41,7 +41,9 @@ def main():
         elif x==";":
             print("SEMICOLON ; null")
         else:
-            print(f"[line 1] Error: Unexpected character: {x}")        
+            print(f"[line 1] Error: Unexpected character: {x}") 
+            sys.exit(65)
+                  
     print("EOF  null")
 if __name__ == "__main__":
     main()
