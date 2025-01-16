@@ -25,12 +25,17 @@ def main():
     #     if c == ")":
     #         print("RIGHT_PAREN ) null")
     # print("EOF  null")
-    for c in file_contents:
-        if c == "{":
+    for x in file_contents:
+        if x == "(":
+            print("LEFT_PAREN ( null")
+        elif x == ")":
+            print("RIGHT_PAREN ) null")
+        elif x == "{":
             print("LEFT_BRACE { null")
-        if c == "}":
+        elif x == "}":
             print("RIGHT_BRACE } null")
     print("EOF  null")
+
 
 if __name__ == "__main__":
     main()
