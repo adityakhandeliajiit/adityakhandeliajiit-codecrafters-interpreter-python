@@ -36,6 +36,10 @@ def main():
             print("COMMA , null")
         elif x == "+":
             print("PLUS + null")
+        elif x=="-":
+            print("MINUS - null")
+        elif x==";":
+            print("SEMICOLON ; null")    
     print("EOF  null")
     # for line in file_contents:
     #         for char in line:
