@@ -18,9 +18,17 @@ def main():
 
     # You can use print statements as follows for debugging, they'll be visible when running tests.
     print("Logs from your program will appear here!", file=sys.stderr)
-    error=False
-    for x in file_contents:
-        if x == "(":
+    error = False
+    i = 0
+    while i < len(file_contents):
+        x = file_contents[i]
+        if x=="=":
+            if i+1<len(file_contents) and file_contents[i+1]=="=":
+                 print("EQUAL_EQUAL == null")
+                 i += 1  
+            else:
+                print("EQUAL = null")
+        elif x == "(":
             print("LEFT_PAREN ( null")
         elif x == ")":
             print("RIGHT_PAREN ) null")
@@ -36,23 +44,24 @@ def main():
             print("COMMA , null")
         elif x == "+":
             print("PLUS + null")
-        elif x=="-":
+        elif x == "-":
             print("MINUS - null")
-        elif x==";":
+        elif x == ";":
             print("SEMICOLON ; null")
         else:
             error = True
             line_number = file_contents.count("\n", 0, file_contents.find(x)) + 1
             print(
-                "[line %s] Error: Unexpected character: %s" % (line_number,x),
+                "[line %s] Error: Unexpected character: %s" % (line_number, x),
                 file=sys.stderr,
             )
-    print("EOF  null")        
+        i += 1
+    print("EOF  null")
     if error:
         exit(65)
     else:
-        exit(0)                  
-    
+        exit(0)
+
 if __name__ == "__main__":
     main()
 
