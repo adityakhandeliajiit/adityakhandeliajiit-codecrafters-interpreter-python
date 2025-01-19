@@ -22,38 +22,37 @@ def main():
     i = 0
     while i < len(file_contents):
         x = file_contents[i]
-        if x=="/":
-            if i+1<len(file_contents) and file_contents[i+1]=="/":
-                #  print("EQUAL_EQUAL == null")
-                #  i += 1
-                # exit(0)
-                break  
+        if x == "/":
+            if i + 1 < len(file_contents) and file_contents[i + 1] == "/":
+                # Skip the rest of the line for single-line comments
+                while i < len(file_contents) and file_contents[i] != "\n":
+                    i += 1
             else:
                 print("SLASH / null")
-        elif x=="=":
-            if i+1<len(file_contents) and file_contents[i+1]=="=":
-                 print("EQUAL_EQUAL == null")
-                 i += 1  
+        elif x == "=":
+            if i + 1 < len(file_contents) and file_contents[i + 1] == "=":
+                print("EQUAL_EQUAL == null")
+                i += 1
             else:
                 print("EQUAL = null")
-        elif x=="!":
-            if i+1<len(file_contents) and file_contents[i+1]=="=":
-                 print("BANG_EQUAL != null")
-                 i += 1  
-            else: 
-                print("BANG ! null")   
-        elif x=="<":
-            if i+1<len(file_contents) and file_contents[i+1]=="=":
-                 print("LESS_EQUAL <= null")
-                 i += 1  
-            else: 
+        elif x == "!":
+            if i + 1 < len(file_contents) and file_contents[i + 1] == "=":
+                print("BANG_EQUAL != null")
+                i += 1
+            else:
+                print("BANG ! null")
+        elif x == "<":
+            if i + 1 < len(file_contents) and file_contents[i + 1] == "=":
+                print("LESS_EQUAL <= null")
+                i += 1
+            else:
                 print("LESS < null")
-        elif x==">":
-            if i+1<len(file_contents) and file_contents[i+1]=="=":
-                 print("GREATER_EQUAL >= null")
-                 i += 1  
-            else: 
-                print("GREATER > null")                          
+        elif x == ">":
+            if i + 1 < len(file_contents) and file_contents[i + 1] == "=":
+                print("GREATER_EQUAL >= null")
+                i += 1
+            else:
+                print("GREATER > null")
         elif x == "(":
             print("LEFT_PAREN ( null")
         elif x == ")":
@@ -74,11 +73,11 @@ def main():
             print("MINUS - null")
         elif x == ";":
             print("SEMICOLON ; null")
-        elif x in [" ","\t","\n"]:
-            pass    
+        elif x in [" ", "\t", "\n"]:
+            pass
         else:
             error = True
-            line_number = file_contents.count("\n", 0, file_contents.find(x)) + 1
+            line_number = file_contents.count("\n", 0, i) + 1
             print(
                 "[line %s] Error: Unexpected character: %s" % (line_number, x),
                 file=sys.stderr,
