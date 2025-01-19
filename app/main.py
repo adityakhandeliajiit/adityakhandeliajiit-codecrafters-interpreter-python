@@ -42,7 +42,7 @@ def main():
                 print("LESS < null")
         elif x==">":
             if i+1<len(file_contents) and file_contents[i+1]=="=":
-                 print("GREATER_EQUAL <= null")
+                 print("GREATER_EQUAL >= null")
                  i += 1  
             else: 
                 print("GREATER < null")                          
