@@ -22,7 +22,14 @@ def main():
     i = 0
     while i < len(file_contents):
         x = file_contents[i]
-        if x=="=":
+        if x=="/":
+            if i+1<len(file_contents) and file_contents[i+1]=="/":
+                #  print("EQUAL_EQUAL == null")
+                #  i += 1
+                exit(0)  
+            else:
+                print("SLASH / null")
+        elif x=="=":
             if i+1<len(file_contents) and file_contents[i+1]=="=":
                  print("EQUAL_EQUAL == null")
                  i += 1  
