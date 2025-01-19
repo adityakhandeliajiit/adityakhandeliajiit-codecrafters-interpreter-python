@@ -33,7 +33,19 @@ def main():
                  print("BANG_EQUAL != null")
                  i += 1  
             else: 
-                print("BANG ! null")        
+                print("BANG ! null")   
+        elif x=="<":
+            if i+1<len(file_contents) and file_contents[i+1]=="=":
+                 print("LESS_EQUAL <= null")
+                 i += 1  
+            else: 
+                print("LESS < null")
+        elif x==">":
+            if i+1<len(file_contents) and file_contents[i+1]=="=":
+                 print("GREATER_EQUAL <= null")
+                 i += 1  
+            else: 
+                print("GREATER < null")                          
         elif x == "(":
             print("LEFT_PAREN ( null")
         elif x == ")":
