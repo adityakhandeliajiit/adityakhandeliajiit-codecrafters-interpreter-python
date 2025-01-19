@@ -74,7 +74,7 @@ def main():
             print("MINUS - null")
         elif x == ";":
             print("SEMICOLON ; null")
-        elif x in [" ","\t"]:
+        elif x in [" ","\t","\n"]:
             pass    
         else:
             error = True
