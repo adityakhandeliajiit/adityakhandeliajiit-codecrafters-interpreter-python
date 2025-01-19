@@ -74,11 +74,8 @@ def main():
             print("MINUS - null")
         elif x == ";":
             print("SEMICOLON ; null")
-        elif x.isspace():
-            if i+4<len(file_contents) and file_contents[i:i+4]=="    ":
-                 i += 3  
-            else: 
-                continue    
+        elif x in [" ","\t"]:
+            pass    
         else:
             error = True
             line_number = file_contents.count("\n", 0, file_contents.find(x)) + 1
