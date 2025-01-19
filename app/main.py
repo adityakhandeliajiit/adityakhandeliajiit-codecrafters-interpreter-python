@@ -26,7 +26,8 @@ def main():
             if i+1<len(file_contents) and file_contents[i+1]=="/":
                 #  print("EQUAL_EQUAL == null")
                 #  i += 1
-                exit(0)  
+                # exit(0)
+                break  
             else:
                 print("SLASH / null")
         elif x=="=":
