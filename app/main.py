@@ -45,7 +45,7 @@ def main():
                  print("GREATER_EQUAL >= null")
                  i += 1  
             else: 
-                print("GREATER < null")                          
+                print("GREATER > null")                          
         elif x == "(":
             print("LEFT_PAREN ( null")
         elif x == ")":
