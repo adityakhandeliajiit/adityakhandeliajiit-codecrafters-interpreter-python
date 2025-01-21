@@ -25,7 +25,6 @@ def main():
         if x=='"':
             end_index = file_contents.find('"', i+ 1)
             if end_index==-1:
-                error = True
                 line_number = file_contents.count("\n", 0, i) + 1
                 print(
                 "[line %s] Error: Unterminated string." % (line_number),
