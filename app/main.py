@@ -27,8 +27,7 @@ def main():
             if end_index==-1:
                 line_number = file_contents.count("\n", 0, i) + 1
                 print(
-                "[line %s] Error: Unterminated string." % (line_number),
-                file=sys.stderr,
+                "[line %s] Error: Unterminated string." % (line_number)
                 )
             else:
                 print("STRING "'%s'" %s"%(file_contents[i,end_index]))
