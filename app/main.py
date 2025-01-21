@@ -22,6 +22,17 @@ def main():
     i = 0
     while i < len(file_contents):
         x = file_contents[i]
+        if x=='"':
+            end_index = file_contents.find('"', i+ 1)
+            if end_index==-1:
+                error = True
+                line_number = file_contents.count("\n", 0, i) + 1
+                print(
+                "[line %s] Error: Unterminated string." % (line_number),
+                file=sys.stderr,
+                )
+            else:
+                print("STRING "'%s'" %s"%(file_contents[i,end_index]))
         if x == "/":
             if i + 1 < len(file_contents) and file_contents[i + 1] == "/":
                 # Skip the rest of the line for single-line comments
