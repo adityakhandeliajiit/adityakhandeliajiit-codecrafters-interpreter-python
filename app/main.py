@@ -34,7 +34,7 @@ def main():
                 break
             else:
                 string_value = file_contents[i:end_index + 1]
-                print(f'STRING {string_value} {string_value}')
+                print(f'STRING "{string_value}" {string_value.strip("\"")}')
                 i = end_index
         elif x == "/":
             if i + 1 < len(file_contents) and file_contents[i + 1] == "/":
