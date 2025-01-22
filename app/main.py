@@ -99,10 +99,10 @@ def main():
                 file=sys.stderr,
             )
         i += 1
-        if inverted_flag:
+    if inverted_flag:
             print("EOF  null")
-        else:
-            print("EOF null")
+    else:
+            print("EOF null")    
     if error:
         exit(65)
     else:
