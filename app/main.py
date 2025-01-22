@@ -20,6 +20,7 @@ def main():
     print("Logs from your program will appear here!", file=sys.stderr)
     error = False
     i = 0
+    inverted_flag=False
     while i < len(file_contents):
         x = file_contents[i]
         if x == '"':
@@ -35,6 +36,7 @@ def main():
             else:
                 string_value = file_contents[i:end_index + 1]
                 print(f'STRING {string_value} {string_value.strip("\"")}')
+                inverted_flag=True
                 i = end_index
         elif x == "/":
             if i + 1 < len(file_contents) and file_contents[i + 1] == "/":
@@ -97,7 +99,10 @@ def main():
                 file=sys.stderr,
             )
         i += 1
-    print("EOF null")
+        if inverted_flag:
+            print("EOF  null")
+        else:
+            print("EOF null")
     if error:
         exit(65)
     else:
