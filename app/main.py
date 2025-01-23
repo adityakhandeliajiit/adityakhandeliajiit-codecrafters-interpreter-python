@@ -4,7 +4,7 @@ import re
 def extract_word(sentence, start_index):
     end_index = start_index
     # while end_index < len(sentence) and sentence[end_index].isalnum():
-    while end_index < len(sentence) and sentence[end_index]!=" ":
+    while end_index < len(sentence) and (sentence[end_index].isalnum() or sentence[end_index] == "_"):
         end_index += 1
     return sentence[start_index:end_index]
 
