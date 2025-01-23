@@ -29,12 +29,14 @@ def main():
     i = 0
     while i < len(file_contents):
         x = file_contents[i]
-        if x.isdigit():
+        if x==" ":
+            continue
+        elif x.isdigit():
             match = re.match(r'\d+(\.\d+)?', file_contents[i:])
             if match:
                 number_value = match.group()
                 print(f"NUMBER {number_value} {float(number_value)}")
-                i += len(number_value) - 1
+                i += len(number_value)
         elif x.isalpha() or x=="_":
             lit = extract_word(file_contents, i)
             print(f'IDENTIFIER {lit} null')
