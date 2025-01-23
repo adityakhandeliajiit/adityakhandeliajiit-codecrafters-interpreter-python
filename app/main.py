@@ -1,5 +1,10 @@
 import sys
 import re
+def extract_word(sentence, start_index):
+    end_index = sentence.find(" ", start_index)  # Find the next space
+    if end_index == -1:  # If no space is found, take the rest of the string
+        return sentence[start_index:]
+    return sentence[start_index:end_index]
 
 def main():
     if len(sys.argv) < 3:
@@ -28,6 +33,9 @@ def main():
                 number_value = match.group()
                 print(f"NUMBER {number_value} {float(number_value)}")
                 i += len(number_value) - 1
+        elif x.isalpha():
+            lit=extract_word(file_contents,i)
+            print(f'IDENTIFIER {lit} null')        
         elif x == '"':
             end_index = file_contents.find('"', i + 1)
             if end_index == -1:
