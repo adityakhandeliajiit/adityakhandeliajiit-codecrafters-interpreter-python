@@ -34,7 +34,7 @@ def main():
                 number_value = match.group()
                 print(f"NUMBER {number_value} {float(number_value)}")
                 i += len(number_value) - 1
-        elif x.isalpha():
+        elif x.isalpha() or x=="_":
             lit = extract_word(file_contents, i)
             print(f'IDENTIFIER {lit} null')
             i += len(lit)
