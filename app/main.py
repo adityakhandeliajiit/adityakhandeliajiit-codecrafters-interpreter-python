@@ -2,9 +2,9 @@ import sys
 import re
 
 def extract_word(sentence, start_index):
-    end_index = sentence.find(" ", start_index)  # Find the next space
-    if end_index == -1:  # If no space is found, take the rest of the string
-        return sentence[start_index:]
+    end_index = start_index
+    while end_index < len(sentence) and sentence[end_index].isalnum():
+        end_index += 1
     return sentence[start_index:end_index]
 
 def main():
@@ -113,7 +113,7 @@ def main():
                 file=sys.stderr,
             )
         i += 1
-    print("EOF  null")
+    print("EOF null")
     if error:
         exit(65)
     else:
