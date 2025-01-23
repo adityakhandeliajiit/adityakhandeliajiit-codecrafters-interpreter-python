@@ -32,7 +32,7 @@ def main():
             if match:
                 number_value = match.group()
                 print(f"NUMBER {number_value} {float(number_value)}")
-                i += len(number_value) - 1
+                i += len(number_value)
         elif x.isalpha():
             lit=extract_word(file_contents,i)
             print(f'IDENTIFIER {lit} null')
