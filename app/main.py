@@ -20,16 +20,15 @@ def main():
     print("Logs from your program will appear here!", file=sys.stderr)
     error = False
     i = 0
-    inverted_flag=False
     while i < len(file_contents):
         x = file_contents[i]
         if x.isdigit():
-            match = re.search(r'\d+\.\d+|\d+', file_contents)
-            # withdecimal=float(match.group())
-            # print(f'NUMBER {match} {withdecimal}')
+            match = re.match(r'\d+(\.\d+)?', file_contents[i:])
             if match:
-               print(f"NUMBER {match.group()} {float(match.group())}")
-        if x == '"':
+                number_value = match.group()
+                print(f"NUMBER {number_value} {float(number_value)}")
+                i += len(number_value) - 1
+        elif x == '"':
             end_index = file_contents.find('"', i + 1)
             if end_index == -1:
                 line_number = file_contents.count("\n", 0, i) + 1
@@ -42,7 +41,6 @@ def main():
             else:
                 string_value = file_contents[i:end_index + 1]
                 print(f'STRING {string_value} {string_value.strip("\"")}')
-                inverted_flag=True
                 i = end_index
         elif x == "/":
             if i + 1 < len(file_contents) and file_contents[i + 1] == "/":
@@ -105,11 +103,7 @@ def main():
                 file=sys.stderr,
             )
         i += 1
-    # if inverted_flag:
-    #         print("EOF  null")
-    # else:
-    #         print("EOF null") /
-    print("EOF  null")   
+    print("EOF null")
     if error:
         exit(65)
     else:
