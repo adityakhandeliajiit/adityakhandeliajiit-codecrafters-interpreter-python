@@ -1,5 +1,5 @@
 import sys
-
+import re
 
 def main():
     if len(sys.argv) < 3:
@@ -23,6 +23,10 @@ def main():
     inverted_flag=False
     while i < len(file_contents):
         x = file_contents[i]
+        if x.isdigit():
+            match = re.search(r'\d+\.\d+|\d+', file_contents)
+            withdecimal=float(match.group())
+            print(f'NUMBER {match} {withdecimal}')
         if x == '"':
             end_index = file_contents.find('"', i + 1)
             if end_index == -1:
