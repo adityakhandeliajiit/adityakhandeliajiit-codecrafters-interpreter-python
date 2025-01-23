@@ -37,7 +37,7 @@ def main():
         elif x.isalpha():
             lit = extract_word(file_contents, i)
             print(f'IDENTIFIER {lit} null')
-            i += len(lit) - 1
+            i += len(lit)
         elif x == '"':
             end_index = file_contents.find('"', i + 1)
             if end_index == -1:
