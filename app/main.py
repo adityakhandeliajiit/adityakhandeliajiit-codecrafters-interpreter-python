@@ -103,7 +103,7 @@ def main():
                 file=sys.stderr,
             )
         i += 1
-    print("EOF null")
+    print("EOF  null")
     if error:
         exit(65)
     else:
