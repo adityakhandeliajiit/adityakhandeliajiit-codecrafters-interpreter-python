@@ -38,7 +38,7 @@ def main():
                 print(f"NUMBER {number_value} {float(number_value)}")
                 i += len(number_value)
         elif x.isalpha() or x=="_":
-            lit = x.identifier()
+            lit = extract_word(file_contents, i)
             print(f'IDENTIFIER {lit} null')
             i += len(lit)
         elif x == '"':
