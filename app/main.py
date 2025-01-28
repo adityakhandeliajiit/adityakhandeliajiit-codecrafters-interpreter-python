@@ -31,6 +31,12 @@ def main():
         if x in [" ", "\t", "\n"]:
             i += 1
             continue
+        elif x.isalpha():
+            lit = extract_word(file_contents, i)
+            if lit in ["and", "class", "else", "false", "for", "fun", "if", "nil", "or", "print", "return", "super", "this", "true", "var", "while"]:
+                 print(f'{lit.upper()} {lit} null')
+                 i += len(lit)
+                 continue
         elif x.isdigit():
             match = re.match(r'\d+(\.\d+)?', file_contents[i:])
             if match:
