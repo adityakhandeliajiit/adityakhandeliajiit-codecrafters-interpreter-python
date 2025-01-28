@@ -26,17 +26,20 @@ def main():
     print("Logs from your program will appear here!", file=sys.stderr)
     error = False
     i = 0
+    keywords = ["and", "class", "else", "false", "for", "fun", "if", "nil", "or", "print", "return", "super", "this", "true", "var", "while"]
     while i < len(file_contents):
         x = file_contents[i]
         if x in [" ", "\t", "\n"]:
             i += 1
             continue
-        elif x.isalpha():
+        elif x.isalpha() or x == "_":
             lit = extract_word(file_contents, i)
-            if lit in ["and", "class", "else", "false", "for", "fun", "if", "nil", "or", "print", "return", "super", "this", "true", "var", "while"]:
-                 print(f'{lit.upper()} {lit} null')
-                 i += len(lit)
-                 continue
+            if lit in keywords:
+                print(f'{lit.upper()} {lit} null')
+            else:
+                print(f'IDENTIFIER {lit} null')
+            i += len(lit)
+            continue
         elif x.isdigit():
             match = re.match(r'\d+(\.\d+)?', file_contents[i:])
             if match:
@@ -44,11 +47,6 @@ def main():
                 print(f"NUMBER {number_value} {float(number_value)}")
                 i += len(number_value)
                 continue
-        elif x.isalpha() or x == "_":
-            lit = extract_word(file_contents, i)
-            print(f'IDENTIFIER {lit} null')
-            i += len(lit)
-            continue
         elif x == '"':
             end_index = file_contents.find('"', i + 1)
             if end_index == -1:
