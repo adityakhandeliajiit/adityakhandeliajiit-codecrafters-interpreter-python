@@ -3,7 +3,6 @@ import re
 
 def extract_word(sentence, start_index):
     end_index = start_index
-    # while end_index < len(sentence) and sentence[end_index].isalnum():
     while end_index < len(sentence) and (sentence[end_index].isalnum() or sentence[end_index] == "_"):
         end_index += 1
     return sentence[start_index:end_index]
@@ -29,7 +28,8 @@ def main():
     i = 0
     while i < len(file_contents):
         x = file_contents[i]
-        if x==" ":
+        if x in [" ", "\t", "\n"]:
+            i += 1
             continue
         elif x.isdigit():
             match = re.match(r'\d+(\.\d+)?', file_contents[i:])
@@ -37,10 +37,12 @@ def main():
                 number_value = match.group()
                 print(f"NUMBER {number_value} {float(number_value)}")
                 i += len(number_value)
-        elif x.isalpha() or x=="_":
+                continue
+        elif x.isalpha() or x == "_":
             lit = extract_word(file_contents, i)
             print(f'IDENTIFIER {lit} null')
             i += len(lit)
+            continue
         elif x == '"':
             end_index = file_contents.find('"', i + 1)
             if end_index == -1:
@@ -54,7 +56,8 @@ def main():
             else:
                 string_value = file_contents[i:end_index + 1]
                 print(f'STRING {string_value} {string_value.strip("\"")}')
-                i = end_index
+                i = end_index + 1
+                continue
         elif x == "/":
             if i + 1 < len(file_contents) and file_contents[i + 1] == "/":
                 # Skip the rest of the line for single-line comments
@@ -106,8 +109,6 @@ def main():
             print("MINUS - null")
         elif x == ";":
             print("SEMICOLON ; null")
-        elif x in [" ", "\t", "\n"]:
-            pass
         else:
             error = True
             line_number = file_contents.count("\n", 0, i) + 1
@@ -116,7 +117,7 @@ def main():
                 file=sys.stderr,
             )
         i += 1
-    print("EOF  null")
+    print("EOF null")
     if error:
         exit(65)
     else:
