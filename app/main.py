@@ -19,6 +19,10 @@ class Parser:
             return Literal(False)
         if self.match("NIL"):
             return Literal(None)
+        if self.match("NUMBER"):
+            return Literal(self.previous().literal)
+        if self.match("STRING"):
+            return Literal(self.previous().literal)
         # Handle other literals and expressions...
 
     def match(self, *types):
@@ -89,6 +93,10 @@ class AstPrinter:
     def visit_literal_expr(self, expr):
         if expr.value is None:
             return "nil"
+        if expr.value is True:
+            return "true"
+        if expr.value is False:
+            return "false"
         return str(expr.value)
 
     def visit_binary_expr(self, expr):
