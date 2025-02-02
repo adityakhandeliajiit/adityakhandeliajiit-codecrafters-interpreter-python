@@ -93,10 +93,6 @@ class AstPrinter:
     def visit_literal_expr(self, expr):
         if expr.value is None:
             return "nil"
-        if expr.value is True:
-            return "true"
-        if expr.value is False:
-            return "false"
         return str(expr.value)
 
     def visit_binary_expr(self, expr):
@@ -128,7 +124,8 @@ class Token:
         self.line = line
 
     def __str__(self):
-        return f"{self.type} {self.lexeme} {self.literal}"
+        literal_str = "null" if self.literal is None else self.literal
+        return f"{self.type} {self.lexeme} {literal_str}"
 
 def extract_word(sentence, start_index):
     end_index = start_index
@@ -148,9 +145,9 @@ def tokenize(file_contents):
         elif x.isalpha() or x == "_":
             lit = extract_word(file_contents, i)
             if lit in keywords:
-                tokens.append(Token(lit.upper(), lit, null, 1))
+                tokens.append(Token(lit.upper(), lit, None, 1))
             else:
-                tokens.append(Token("IDENTIFIER", lit, null, 1))
+                tokens.append(Token("IDENTIFIER", lit, None, 1))
             i += len(lit)
             continue
         elif x.isdigit():
@@ -181,51 +178,51 @@ def tokenize(file_contents):
                 while i < len(file_contents) and file_contents[i] != "\n":
                     i += 1
             else:
-                tokens.append(Token("SLASH", "/", null, 1))
+                tokens.append(Token("SLASH", "/", None, 1))
         elif x == "=":
             if i + 1 < len(file_contents) and file_contents[i + 1] == "=":
-                tokens.append(Token("EQUAL_EQUAL", "==", null, 1))
+                tokens.append(Token("EQUAL_EQUAL", "==", None, 1))
                 i += 1
             else:
-                tokens.append(Token("EQUAL", "=", null, 1))
+                tokens.append(Token("EQUAL", "=", None, 1))
         elif x == "!":
             if i + 1 < len(file_contents) and file_contents[i + 1] == "=":
-                tokens.append(Token("BANG_EQUAL", "!=", null, 1))
+                tokens.append(Token("BANG_EQUAL", "!=", None, 1))
                 i += 1
             else:
-                tokens.append(Token("BANG", "!", null, 1))
+                tokens.append(Token("BANG", "!", None, 1))
         elif x == "<":
             if i + 1 < len(file_contents) and file_contents[i + 1] == "=":
-                tokens.append(Token("LESS_EQUAL", "<=", null, 1))
+                tokens.append(Token("LESS_EQUAL", "<=", None, 1))
                 i += 1
             else:
-                tokens.append(Token("LESS", "<", null, 1))
+                tokens.append(Token("LESS", "<", None, 1))
         elif x == ">":
             if i + 1 < len(file_contents) and file_contents[i + 1] == "=":
-                tokens.append(Token("GREATER_EQUAL", ">=", null, 1))
+                tokens.append(Token("GREATER_EQUAL", ">=", None, 1))
                 i += 1
             else:
-                tokens.append(Token("GREATER", ">", null, 1))
+                tokens.append(Token("GREATER", ">", None, 1))
         elif x == "(":
-            tokens.append(Token("LEFT_PAREN", "(", null, 1))
+            tokens.append(Token("LEFT_PAREN", "(", None, 1))
         elif x == ")":
-            tokens.append(Token("RIGHT_PAREN", ")", null, 1))
+            tokens.append(Token("RIGHT_PAREN", ")", None, 1))
         elif x == "{":
-            tokens.append(Token("LEFT_BRACE", "{", null, 1))
+            tokens.append(Token("LEFT_BRACE", "{", None, 1))
         elif x == "}":
-            tokens.append(Token("RIGHT_BRACE", "}", null, 1))
+            tokens.append(Token("RIGHT_BRACE", "}", None, 1))
         elif x == "*":
-            tokens.append(Token("STAR", "*", null, 1))
+            tokens.append(Token("STAR", "*", None, 1))
         elif x == ".":
-            tokens.append(Token("DOT", ".", null, 1))
+            tokens.append(Token("DOT", ".", None, 1))
         elif x == ",":
-            tokens.append(Token("COMMA", ",", null, 1))
+            tokens.append(Token("COMMA", ",", None, 1))
         elif x == "+":
-            tokens.append(Token("PLUS", "+", null, 1))
+            tokens.append(Token("PLUS", "+", None, 1))
         elif x == "-":
-            tokens.append(Token("MINUS", "-", null, 1))
+            tokens.append(Token("MINUS", "-", None, 1))
         elif x == ";":
-            tokens.append(Token("SEMICOLON", ";", null, 1))
+            tokens.append(Token("SEMICOLON", ";", None, 1))
         else:
             error = True
             line_number = file_contents.count("\n", 0, i) + 1
@@ -234,7 +231,7 @@ def tokenize(file_contents):
                 file=sys.stderr,
             )
         i += 1
-    tokens.append(Token("EOF", "", null, 1))
+    tokens.append(Token("EOF", "", None, 1))
     return tokens
 
 def main():
