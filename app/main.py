@@ -1,41 +1,52 @@
 import sys
 import re
+
 class Parser:
-    def __init__(self,tokens):
-        self.tokens=tokens
-        self.current=0
+    def __init__(self, tokens):
+        self.tokens = tokens
+        self.current = 0
+
     def parse(self):
         return self.expression()
+
     def expression(self):
         return self.primary()
+
     def primary(self):
         if self.match("TRUE"):
             return Literal(True)
         if self.match("FALSE"):
             return Literal(False)
         if self.match("NIL"):
-            return Literal(None) 
-    def match(self,*types):
+            return Literal(None)
+        # Handle other literals and expressions...
+
+    def match(self, *types):
         for type in types:
             if self.check(type):
                 self.advance()
                 return True
-            else:
-                return False
-    def check(self,type):
+        return False
+
+    def check(self, type):
         if self.is_at_end():
             return False
-        return self.peek().type==type
+        return self.peek().type == type
+
     def advance(self):
         if not self.is_at_end():
-            self.current+=1
+            self.current += 1
         return self.previous()
+
     def is_at_end(self):
         return self.peek().type == "EOF"
+
     def peek(self):
         return self.tokens[self.current]
+
     def previous(self):
-        return self.tokens[self.current - 1]  
+        return self.tokens[self.current - 1]
+
 class Expr:
     def accept(self, visitor):
         pass
@@ -70,6 +81,7 @@ class Unary(Expr):
 
     def accept(self, visitor):
         return visitor.visit_unary_expr(self)
+
 class AstPrinter:
     def print(self, expr):
         return expr.accept(self)
@@ -98,42 +110,26 @@ class AstPrinter:
             builder.append(expr.accept(self))
         builder.append(")")
 
-        return "".join(builder)                                                                                
+        return "".join(builder)
+
+class Token:
+    def __init__(self, type, lexeme, literal, line):
+        self.type = type
+        self.lexeme = lexeme
+        self.literal = literal
+        self.line = line
+
+    def __str__(self):
+        return f"{self.type} {self.lexeme} {self.literal}"
+
 def extract_word(sentence, start_index):
     end_index = start_index
     while end_index < len(sentence) and (sentence[end_index].isalnum() or sentence[end_index] == "_"):
         end_index += 1
     return sentence[start_index:end_index]
 
-def main():
-    if len(sys.argv) < 3:
-        print("Usage: ./your_program.sh tokenize <filename>", file=sys.stderr)
-        exit(1)
-
-    command = sys.argv[1]
-    filename = sys.argv[2]
-
-    if command not in ["tokenize","parse"]:
-        print(f"Unknown command: {command}", file=sys.stderr)
-        exit(1)
-    
-    with open(filename) as file:
-        file_contents = file.read()
-    if command == "tokenize":
-        pass
-    elif command == "parse":
-        tokens = []
-        
-        parser = Parser(tokens)
-        expression = parser.parse()
-
-        # Print the AST
-        printer = AstPrinter()
-        print(printer.print(expression))    
-
-    # You can use print statements as follows for debugging, they'll be visible when running tests.
-    print("Logs from your program will appear here!", file=sys.stderr)
-    error = False
+def tokenize(file_contents):
+    tokens = []
     i = 0
     keywords = ["and", "class", "else", "false", "for", "fun", "if", "nil", "or", "print", "return", "super", "this", "true", "var", "while"]
     while i < len(file_contents):
@@ -144,16 +140,16 @@ def main():
         elif x.isalpha() or x == "_":
             lit = extract_word(file_contents, i)
             if lit in keywords:
-                print(f'{lit.upper()} {lit} null')
+                tokens.append(Token(lit.upper(), lit, None, 1))
             else:
-                print(f'IDENTIFIER {lit} null')
+                tokens.append(Token("IDENTIFIER", lit, None, 1))
             i += len(lit)
             continue
         elif x.isdigit():
             match = re.match(r'\d+(\.\d+)?', file_contents[i:])
             if match:
                 number_value = match.group()
-                print(f"NUMBER {number_value} {float(number_value)}")
+                tokens.append(Token("NUMBER", number_value, float(number_value), 1))
                 i += len(number_value)
                 continue
         elif x == '"':
@@ -168,7 +164,7 @@ def main():
                 break
             else:
                 string_value = file_contents[i:end_index + 1]
-                print(f'STRING {string_value} {string_value.strip("\"")}')
+                tokens.append(Token("STRING", string_value, string_value.strip("\""), 1))
                 i = end_index + 1
                 continue
         elif x == "/":
@@ -177,51 +173,51 @@ def main():
                 while i < len(file_contents) and file_contents[i] != "\n":
                     i += 1
             else:
-                print("SLASH / null")
+                tokens.append(Token("SLASH", "/", None, 1))
         elif x == "=":
             if i + 1 < len(file_contents) and file_contents[i + 1] == "=":
-                print("EQUAL_EQUAL == null")
+                tokens.append(Token("EQUAL_EQUAL", "==", None, 1))
                 i += 1
             else:
-                print("EQUAL = null")
+                tokens.append(Token("EQUAL", "=", None, 1))
         elif x == "!":
             if i + 1 < len(file_contents) and file_contents[i + 1] == "=":
-                print("BANG_EQUAL != null")
+                tokens.append(Token("BANG_EQUAL", "!=", None, 1))
                 i += 1
             else:
-                print("BANG ! null")
+                tokens.append(Token("BANG", "!", None, 1))
         elif x == "<":
             if i + 1 < len(file_contents) and file_contents[i + 1] == "=":
-                print("LESS_EQUAL <= null")
+                tokens.append(Token("LESS_EQUAL", "<=", None, 1))
                 i += 1
             else:
-                print("LESS < null")
+                tokens.append(Token("LESS", "<", None, 1))
         elif x == ">":
             if i + 1 < len(file_contents) and file_contents[i + 1] == "=":
-                print("GREATER_EQUAL >= null")
+                tokens.append(Token("GREATER_EQUAL", ">=", None, 1))
                 i += 1
             else:
-                print("GREATER > null")
+                tokens.append(Token("GREATER", ">", None, 1))
         elif x == "(":
-            print("LEFT_PAREN ( null")
+            tokens.append(Token("LEFT_PAREN", "(", None, 1))
         elif x == ")":
-            print("RIGHT_PAREN ) null")
+            tokens.append(Token("RIGHT_PAREN", ")", None, 1))
         elif x == "{":
-            print("LEFT_BRACE { null")
+            tokens.append(Token("LEFT_BRACE", "{", None, 1))
         elif x == "}":
-            print("RIGHT_BRACE } null")
+            tokens.append(Token("RIGHT_BRACE", "}", None, 1))
         elif x == "*":
-            print("STAR * null")
+            tokens.append(Token("STAR", "*", None, 1))
         elif x == ".":
-            print("DOT . null")
+            tokens.append(Token("DOT", ".", None, 1))
         elif x == ",":
-            print("COMMA , null")
+            tokens.append(Token("COMMA", ",", None, 1))
         elif x == "+":
-            print("PLUS + null")
+            tokens.append(Token("PLUS", "+", None, 1))
         elif x == "-":
-            print("MINUS - null")
+            tokens.append(Token("MINUS", "-", None, 1))
         elif x == ";":
-            print("SEMICOLON ; null")
+            tokens.append(Token("SEMICOLON", ";", None, 1))
         else:
             error = True
             line_number = file_contents.count("\n", 0, i) + 1
@@ -230,11 +226,36 @@ def main():
                 file=sys.stderr,
             )
         i += 1
-    print("EOF  null")
-    if error:
-        exit(65)
-    else:
-        exit(0)
+    tokens.append(Token("EOF", "", None, 1))
+    return tokens
+
+def main():
+    if len(sys.argv) < 3:
+        print("Usage: ./your_program.sh <command> <filename>", file=sys.stderr)
+        exit(1)
+
+    command = sys.argv[1]
+    filename = sys.argv[2]
+
+    if command not in ["tokenize", "parse"]:
+        print(f"Unknown command: {command}", file=sys.stderr)
+        exit(1)
+
+    with open(filename) as file:
+        file_contents = file.read()
+
+    if command == "tokenize":
+        tokens = tokenize(file_contents)
+        for token in tokens:
+            print(token)
+    elif command == "parse":
+        tokens = tokenize(file_contents)
+        parser = Parser(tokens)
+        expression = parser.parse()
+
+        # Print the AST
+        printer = AstPrinter()
+        print(printer.print(expression))
 
 if __name__ == "__main__":
     main()
