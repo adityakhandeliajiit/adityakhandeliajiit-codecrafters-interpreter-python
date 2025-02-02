@@ -93,6 +93,10 @@ class AstPrinter:
     def visit_literal_expr(self, expr):
         if expr.value is None:
             return "nil"
+        if expr.value is True:
+            return "true"
+        if expr.value is "false":
+            return "false"        
         return str(expr.value)
 
     def visit_binary_expr(self, expr):
