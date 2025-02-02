@@ -1,6 +1,7 @@
 import sys
 import re
-
+global exitcode
+exitcode=1
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
@@ -234,6 +235,7 @@ def tokenize(file_contents):
                 "[line %s] Error: Unexpected character: %s" % (line_number, x),
                 file=sys.stderr,
             )
+            exitcode=65
         i += 1
     tokens.append(Token("EOF", "", None, 1))
     return tokens
@@ -248,7 +250,7 @@ def main():
 
     if command not in ["tokenize", "parse"]:
         print(f"Unknown command: {command}", file=sys.stderr)
-        exit(1)
+        exit(exitcode)
 
     with open(filename) as file:
         file_contents = file.read()
