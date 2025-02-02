@@ -235,6 +235,10 @@ def tokenize(file_contents):
                 file=sys.stderr,
             )
         i += 1
+    if error:
+        exit(65)
+    else:
+        exit(0)        
     tokens.append(Token("EOF", "", None, 1))
     return tokens
 
