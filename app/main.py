@@ -95,7 +95,7 @@ class AstPrinter:
             return "nil"
         if expr.value is True:
             return "true"
-        if expr.value is "false":
+        if expr.value is False:
             return "false"        
         return str(expr.value)
 
