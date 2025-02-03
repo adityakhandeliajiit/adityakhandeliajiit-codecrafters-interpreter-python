@@ -1,14 +1,17 @@
 import sys
 import re
-global exitcode
-exitcode=1
+
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
         self.current = 0
 
     def parse(self):
-        return self.expression()
+        try:
+            return self.expression()
+        except Exception as e:
+            self.error(self.peek(), str(e))
+            return None
 
     def expression(self):
         return self.primary()
@@ -25,6 +28,7 @@ class Parser:
         if self.match("STRING"):
             return Literal(self.previous().literal)
         # Handle other literals and expressions...
+        raise Exception("Expected expression")
 
     def match(self, *types):
         for type in types:
@@ -51,6 +55,10 @@ class Parser:
 
     def previous(self):
         return self.tokens[self.current - 1]
+
+    def error(self, token, message):
+        print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
+        return Exception()
 
 class Expr:
     def accept(self, visitor):
@@ -97,7 +105,7 @@ class AstPrinter:
         if expr.value is True:
             return "true"
         if expr.value is False:
-            return "false"        
+            return "false"
         return str(expr.value)
 
     def visit_binary_expr(self, expr):
@@ -142,6 +150,7 @@ def tokenize(file_contents):
     tokens = []
     i = 0
     keywords = ["and", "class", "else", "false", "for", "fun", "if", "nil", "or", "print", "return", "super", "this", "true", "var", "while"]
+    error = False
     while i < len(file_contents):
         x = file_contents[i]
         if x in [" ", "\t", "\n"]:
@@ -235,9 +244,10 @@ def tokenize(file_contents):
                 "[line %s] Error: Unexpected character: %s" % (line_number, x),
                 file=sys.stderr,
             )
-            exitcode=65
         i += 1
     tokens.append(Token("EOF", "", None, 1))
+    if error:
+        exit(65)
     return tokens
 
 def main():
@@ -250,7 +260,7 @@ def main():
 
     if command not in ["tokenize", "parse"]:
         print(f"Unknown command: {command}", file=sys.stderr)
-        exit(exitcode)
+        exit(1)
 
     with open(filename) as file:
         file_contents = file.read()
@@ -263,6 +273,9 @@ def main():
         tokens = tokenize(file_contents)
         parser = Parser(tokens)
         expression = parser.parse()
+
+        if expression is None:
+            exit(65)
 
         # Print the AST
         printer = AstPrinter()
