@@ -26,7 +26,7 @@ class Parser:
         if self.match("NUMBER"):
             return Literal(self.previous().literal)
         if self.match("STRING"):
-            return Literal(self.previous().literal)
+            return Literal(self.previous())  # Pass the entire token
         # Handle other literals and expressions...
         raise Exception("Expected expression")
 
@@ -106,8 +106,8 @@ class AstPrinter:
             return "true"
         if expr.value is False:
             return "false"
-        if isinstance(expr.value, str):
-            return f'STRING "{expr.value}" {expr.value}'
+        if isinstance(expr.value, Token) and expr.value.type == "STRING":
+            return f'STRING {expr.value.lexeme} {expr.value.literal}'
         return str(expr.value)
 
     def visit_binary_expr(self, expr):
@@ -185,7 +185,8 @@ def tokenize(file_contents):
                 break
             else:
                 string_value = file_contents[i:end_index + 1]
-                tokens.append(Token("STRING", string_value, string_value.strip("\""), 1))
+                literal_value = string_value[1:-1]  # Remove surrounding quotes
+                tokens.append(Token("STRING", string_value, literal_value, 1))
                 i = end_index + 1
                 continue
         elif x == "/":
