@@ -26,7 +26,7 @@ class Parser:
         if self.match("NUMBER"):
             return Literal(self.previous().literal)
         if self.match("STRING"):
-            return Literal(self.previous().literal)  # Pass the literal value
+            return Literal(self.previous().lexeme)  # Pass the literal value
         # Handle other literals and expressions...
         if self.match("IDENTIFIER"):  # <-- new handling for bare identifiers
            return Literal(self.previous().lexeme)
