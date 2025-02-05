@@ -28,6 +28,8 @@ class Parser:
         if self.match("STRING"):
             return Literal(self.previous().literal)  # Pass the literal value
         # Handle other literals and expressions...
+        if self.match("IDENTIFIER"):  # <-- new handling for bare identifiers
+           return Literal(self.previous().lexeme)
         raise Exception("Expected expression")
 
     def match(self, *types):
