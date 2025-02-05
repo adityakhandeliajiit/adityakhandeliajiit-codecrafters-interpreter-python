@@ -17,20 +17,19 @@ class Parser:
         return self.primary()
 
     def primary(self):
-        if self.match("TRUE"):
-            return Literal(True)
-        if self.match("FALSE"):
-            return Literal(False)
-        if self.match("NIL"):
-            return Literal(None)
-        if self.match("NUMBER"):
-            return Literal(self.previous().literal)
-        if self.match("STRING"):
-            return Literal(self.previous().lexeme)  # Pass the literal value
-        # Handle other literals and expressions...
-        if self.match("IDENTIFIER"):  # <-- new handling for bare identifiers
-           return Literal(self.previous().lexeme)
-        raise Exception("Expected expression")
+     if self.match("TRUE"):
+        return Literal(True)
+     if self.match("FALSE"):
+        return Literal(False)
+     if self.match("NIL"):
+        return Literal(None)
+     if self.match("IDENTIFIER"):  # <-- now check identifiers right after booleans/nil
+        return Literal(self.previous().lexeme)
+     if self.match("NUMBER"):
+        return Literal(self.previous().literal)
+     if self.match("STRING"):
+        return Literal(self.previous().literal)  # Pass the literal value
+    raise Exception("Expected expression")
 
     def match(self, *types):
         for type in types:
