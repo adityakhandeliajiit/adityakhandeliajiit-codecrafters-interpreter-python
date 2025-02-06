@@ -23,12 +23,13 @@ class Parser:
             return Literal(False)
         if self.match("NIL"):
             return Literal(None)
-        if self.match("IDENTIFIER"):
-            return Literal(self.previous().lexeme)        
         if self.match("NUMBER"):
             return Literal(self.previous().literal)
         if self.match("STRING"):
             return Literal(self.previous().literal)  # Pass the literal value
+        # Handle other literals and expressions...
+        if self.match("IDENTIFIER"):  # <-- new handling for bare identifiers
+           return Literal(self.previous().lexeme)
         raise Exception("Expected expression")
 
     def match(self, *types):
@@ -283,7 +284,8 @@ def main():
 
         # Print the AST
         printer = AstPrinter()
-        print(printer.print(expression))
+        result = printer.print(expression)
+        print(result)  # Ensure this line is present and not commented out
 
 if __name__ == "__main__":
     main()
