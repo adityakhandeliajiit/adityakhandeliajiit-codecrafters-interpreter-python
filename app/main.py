@@ -251,8 +251,8 @@ def tokenize(file_contents):
             )
         i += 1
     tokens.append(Token("EOF", "", None, 1))
-    if error:
-        exit(65)
+    # if error:
+    #     exit(65)
     return tokens
 
 def main():
