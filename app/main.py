@@ -1,6 +1,6 @@
 import sys
 import re
-
+had_error = False
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
@@ -151,6 +151,7 @@ def extract_word(sentence, start_index):
     return sentence[start_index:end_index]
 
 def tokenize(file_contents):
+    global had_error  
     tokens = []
     i = 0
     keywords = ["and", "class", "else", "false", "for", "fun", "if", "nil", "or", "print", "return", "super", "this", "true", "var", "while"]
@@ -183,7 +184,7 @@ def tokenize(file_contents):
                     "[line %s] Error: Unterminated string." % (line_number),
                     file=sys.stderr
                 )
-                error = True
+                had_error = True
                 break
             else:
                 string_value = file_contents[i:end_index + 1]
@@ -274,6 +275,8 @@ def main():
         tokens = tokenize(file_contents)
         for token in tokens:
             print(token)
+        if had_error:
+            exit(65)    
     elif command == "parse":
         tokens = tokenize(file_contents)
         parser = Parser(tokens)
