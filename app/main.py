@@ -244,12 +244,13 @@ def tokenize(file_contents):
         elif x == ";":
             tokens.append(Token("SEMICOLON", ";", None, 1))
         else:
-            error = True
+            had_error = True
             line_number = file_contents.count("\n", 0, i) + 1
             print(
                 "[line %s] Error: Unexpected character: %s" % (line_number, x),
                 file=sys.stderr,
             )
+            break
         i += 1
     tokens.append(Token("EOF", "", None, 1))
     # if error:
