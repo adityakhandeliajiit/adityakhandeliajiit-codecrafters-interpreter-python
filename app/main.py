@@ -250,7 +250,7 @@ def tokenize(file_contents):
                 "[line %s] Error: Unexpected character: %s" % (line_number, x),
                 file=sys.stderr,
             )
-            break
+            
         i += 1
     tokens.append(Token("EOF", "", None, 1))
     # if error:
