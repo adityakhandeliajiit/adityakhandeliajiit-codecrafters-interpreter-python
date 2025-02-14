@@ -274,20 +274,29 @@ def main():
             print(token)
     elif command == "parse":
         tokens = tokenize(file_contents)
-        parser = Parser(tokens)
-        expression = parser.parse()
+        # parser = Parser(tokens)
+        # expression = parser.parse()
 
-        if expression is None:
-            exit(65)
+        # if expression is None:
+        #     exit(65)
 
-        # Print the AST
-        printer = AstPrinter()
-        result = printer.print(expression)
+        # # Print the AST
+        # printer = AstPrinter()
+        # result = printer.print(expression)
         
-        if isinstance(expression, Literal) and expression.type in ("NUMBER","STRING"):
-            print(expression.value)
-        else:
-            print(f"STRING \"{result}\" {result}")
+        # if isinstance(expression, Literal) and expression.type in ("NUMBER","STRING"):
+        #     print(expression.value)
+        # else:
+        #     print(f"STRING \"{result}\" {result}")
+        for token in tokens:
+          if token.type == "EOF":
+            pass
+          elif token.lexeme in ("true", "false", "nil"):
+            print(token.lexeme)
+          elif token.type in ("NUMBER", "STRING"):
+            print(token.literal)
+          else:
+            raise NotImplementedError(f"Token type {token.type} not implemented yet")
 
 if __name__ == "__main__":
     main()
