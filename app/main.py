@@ -287,7 +287,7 @@ def main():
         result = printer.print(expression)
         
         
-        if isinstance(expression, Literal) :
+        if isinstance(expression, Literal) and isinstance(expression.value, str):
             print(result)  
         else:
             print(f"STRING \"{result}\" {result}")
