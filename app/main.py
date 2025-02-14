@@ -108,6 +108,8 @@ class AstPrinter:
             return "true"
         if expr.value is False:
             return "false"
+        if isinstance(expr.value, str):
+            return f'STRING "{expr.value}" {expr.value}'
         return str(expr.value)
 
     def visit_binary_expr(self, expr):
