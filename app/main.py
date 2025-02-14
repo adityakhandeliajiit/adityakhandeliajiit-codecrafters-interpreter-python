@@ -284,8 +284,8 @@ def main():
         printer = AstPrinter()
         result = printer.print(expression)
         
-        if isinstance(expression, Literal) and isinstance(expression.value, str):
-            print(result)
+        if isinstance(expression, Literal) and expression.type in ("NUMBER","STRING"):
+            print(expression.value)
         else:
             print(f"STRING \"{result}\" {result}")
 
