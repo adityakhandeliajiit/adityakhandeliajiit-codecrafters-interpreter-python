@@ -108,8 +108,6 @@ class AstPrinter:
             return "true"
         if expr.value is False:
             return "false"
-        if isinstance(expr.value, str):
-            return f'STRING "{expr.value}" {expr.value}'
         return str(expr.value)
 
     def visit_binary_expr(self, expr):
@@ -285,7 +283,11 @@ def main():
         # Print the AST
         printer = AstPrinter()
         result = printer.print(expression)
-        print(result)
+        
+        if isinstance(expression, Literal) and isinstance(expression.value, str):
+            print(result)
+        else:
+            print(f"STRING \"{result}\" {result}")
 
 if __name__ == "__main__":
     main()
