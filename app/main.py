@@ -285,8 +285,11 @@ def main():
         # Print the AST
         printer = AstPrinter()
         result = printer.print(expression)
-        if isinstance(expression, Literal) and isinstance(expression.value, (str, int, float,None)):
-            print(result)  
+        if isinstance(expression, Literal) and isinstance(expression.value, (str, int, float,)):
+            if isinstance(expression.value, (str, int, float,)):
+                print(result)
+            elif expression.value=="nil":
+                print("nil")      
         else:
             print(f"STRING \"{result}\" {result}")
 
