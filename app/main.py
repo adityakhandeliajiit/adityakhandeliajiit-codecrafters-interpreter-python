@@ -1,6 +1,6 @@
 import sys
 import re
-had_error = False
+
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
@@ -109,7 +109,7 @@ class AstPrinter:
         if expr.value is False:
             return "false"
         if isinstance(expr.value, str):
-            return f'STRING "{expr.value}" {expr.value}'
+            return expr.value  # Return only the string value
         return str(expr.value)
 
     def visit_binary_expr(self, expr):
@@ -151,7 +151,6 @@ def extract_word(sentence, start_index):
     return sentence[start_index:end_index]
 
 def tokenize(file_contents):
-    global had_error  
     tokens = []
     i = 0
     keywords = ["and", "class", "else", "false", "for", "fun", "if", "nil", "or", "print", "return", "super", "this", "true", "var", "while"]
@@ -184,7 +183,7 @@ def tokenize(file_contents):
                     "[line %s] Error: Unterminated string." % (line_number),
                     file=sys.stderr
                 )
-                had_error = True
+                error = True
                 break
             else:
                 string_value = file_contents[i:end_index + 1]
@@ -244,17 +243,16 @@ def tokenize(file_contents):
         elif x == ";":
             tokens.append(Token("SEMICOLON", ";", None, 1))
         else:
-            had_error = True
+            error = True
             line_number = file_contents.count("\n", 0, i) + 1
             print(
                 "[line %s] Error: Unexpected character: %s" % (line_number, x),
                 file=sys.stderr,
             )
-            
         i += 1
     tokens.append(Token("EOF", "", None, 1))
-    # if error:
-    #     exit(65)
+    if error:
+        exit(65)
     return tokens
 
 def main():
@@ -276,8 +274,6 @@ def main():
         tokens = tokenize(file_contents)
         for token in tokens:
             print(token)
-        if had_error:
-            exit(65)    
     elif command == "parse":
         tokens = tokenize(file_contents)
         parser = Parser(tokens)
@@ -289,7 +285,12 @@ def main():
         # Print the AST
         printer = AstPrinter()
         result = printer.print(expression)
-        print(result)  # Ensure this line is present and not commented out
+        
+        
+        if isinstance(expression, Literal) and isinstance(expression.value, str):
+            print(result)  
+        else:
+            print(f"STRING \"{result}\" {result}")
 
 if __name__ == "__main__":
     main()
