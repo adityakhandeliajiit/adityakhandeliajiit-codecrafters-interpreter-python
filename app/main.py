@@ -289,7 +289,7 @@ def main():
             if isinstance(expression.value, (str, int, float,)):
                 print(result)
             elif expression.value=="nil":
-                print("nil")      
+                print('nil')      
         else:
             print(f"STRING \"{result}\" {result}")
 
