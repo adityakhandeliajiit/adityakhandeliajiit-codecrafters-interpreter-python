@@ -290,8 +290,6 @@ def main():
                 print("nil")
             elif isinstance(expression.value, (str, int, float)):
                 print(result)
-            else:
-                print(f"STRING \"{result}\" {result}")
         else:
             print(f"STRING \"{result}\" {result}")
 
