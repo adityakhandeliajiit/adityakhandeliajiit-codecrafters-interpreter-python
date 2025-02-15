@@ -20,7 +20,7 @@ class Parser:
         return self.equal_equal()
     def equal_equal(self):
         expr=self.comparison()
-        while self.match("EQUAL_EQUAL"):
+        while self.match("EQUAL_EQUAL","BANG_EQUAL"):
             operator=self.previous()
             right=self.comparison()
             expr=Binary(expr,operator,right)
