@@ -17,10 +17,17 @@ class Parser:
             return None
 
     def expression(self):
-        return self.multiplication()
+        return self.addition()
+    def addition(self):
+        expr=self.multiplication()
+        while self.match("PLUS","MINUS"):
+            operator=self.previous()
+            right=self.multiplication()
+            expr=Binary(expr,operator,right)
+        return expr    
     def multiplication(self):
         expr = self.unary()
-        while self.match("STAR", "SLASH","PLUS","MINUS"):
+        while self.match("STAR", "SLASH"):
             operator = self.previous()
             right = self.unary()
             expr = Binary(expr, operator, right)
