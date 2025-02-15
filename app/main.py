@@ -1,4 +1,3 @@
-
 import sys
 import re
 
@@ -247,6 +246,7 @@ def tokenize(file_contents):
         else:
             line_number = file_contents.count("\n", 0, i) + 1
             print(f"[line {line_number}] Error: Unexpected character: {x}", file=sys.stderr)
+            had_error = True  # Mark error when unexpected character is found.
         i += 1
     tokens.append(Token("EOF", "", None, 1))
     return tokens
