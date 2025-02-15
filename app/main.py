@@ -17,7 +17,14 @@ class Parser:
             return None
 
     def expression(self):
-        return self.addition()
+        return self.comparison()
+    def comparison(self):
+        expr=self.addition()
+        while self.match("LESS_EQUAL,GREATER_EQUAL"):
+            operator=self.previous()
+            right=self.addition()   
+            expr=Binary(expr,operator,right)
+        return expr        
     def addition(self):
         expr=self.multiplication()
         while self.match("PLUS","MINUS"):
