@@ -33,6 +33,8 @@ class Parser:
         # Handle other literals and expressions...
         if self.match("IDENTIFIER"):  # <-- new handling for bare identifiers
             return Literal(self.previous().lexeme)
+        if self.match("("):
+            return Grouping(self.previous().lexeme)
         raise Exception("Expected expression")
 
     def match(self, *types):
