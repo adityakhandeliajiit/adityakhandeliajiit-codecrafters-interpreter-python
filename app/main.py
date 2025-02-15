@@ -38,6 +38,8 @@ class Parser:
             if not self.match("RIGHT_PAREN"):
               raise Exception("Expected ')' after expression")
             return Grouping(expr)  
+        if self.match("BANG_EQUAL"):
+            return Unary(self.expression())    
         raise Exception("Expected expression")
 
     def match(self, *types):
