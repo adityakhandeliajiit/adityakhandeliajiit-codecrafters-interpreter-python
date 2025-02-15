@@ -38,7 +38,7 @@ class Parser:
             if not self.match("RIGHT_PAREN"):
               raise Exception("Expected ')' after expression")
             return Grouping(expr)  
-        if self.match("BANG"):
+        if self.match("BANG") or self.match("MINUS"):
             operator=self.previous()
             expr=self.expression()
             return Unary(operator,expr)    
