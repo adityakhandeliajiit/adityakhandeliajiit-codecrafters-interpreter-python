@@ -17,7 +17,14 @@ class Parser:
             return None
 
     def expression(self):
-        return self.comparison()
+        return self.equal_equal()
+    def equal_equal(self):
+        expr=self.comparison()
+        while self.match("EQUAL_EQUAL"):
+            operator=self.previous()
+            right=self.comparison()
+            expr=Binary(expr,operator,right)
+        return expr        
     def comparison(self):
         expr=self.addition()
         while self.match("LESS_EQUAL","GREATER_EQUAL","LESS","GREATER"):
