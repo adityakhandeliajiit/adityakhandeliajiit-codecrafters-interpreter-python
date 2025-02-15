@@ -17,7 +17,20 @@ class Parser:
             return None
 
     def expression(self):
-        return self.primary()
+        return self.multiplication()
+    def multiplication(self):
+        expr = self.unary()
+        while self.match("STAR", "SLASH"):
+            operator = self.previous()
+            right = self.unary()
+            expr = Binary(expr, operator, right)
+        return expr  
+    def unary(self):
+        if self.match("BANG", "MINUS"):
+            operator = self.previous()
+            right = self.unary()
+            return Unary(operator, right)   
+        return self.primary()      
 
     def primary(self):
         if self.match("TRUE"):
@@ -37,11 +50,7 @@ class Parser:
             expr=self.expression()
             if not self.match("RIGHT_PAREN"):
               raise Exception("Expected ')' after expression")
-            return Grouping(expr)  
-        if self.match("BANG") or self.match("MINUS"):
-            operator=self.previous()
-            expr=self.expression()
-            return Unary(operator,expr)    
+            return Grouping(expr)   
         raise Exception("Expected expression")
 
     def match(self, *types):
