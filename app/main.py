@@ -20,11 +20,12 @@ class Parser:
         return self.multiplication()
     def multiplication(self):
         expr = self.unary()
-        while self.match("STAR", "SLASH"):
+        while self.match("STAR", "SLASH","PLUS","MINUS"):
             operator = self.previous()
             right = self.unary()
             expr = Binary(expr, operator, right)
-        return expr  
+        return expr
+
     def unary(self):
         if self.match("BANG", "MINUS"):
             operator = self.previous()
