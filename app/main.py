@@ -39,7 +39,9 @@ class Parser:
               raise Exception("Expected ')' after expression")
             return Grouping(expr)  
         if self.match("BANG"):
-            return Unary(self.expression())    
+            operator=self.previous()
+            expr=self.expression()
+            return Unary(operator,expr)    
         raise Exception("Expected expression")
 
     def match(self, *types):
