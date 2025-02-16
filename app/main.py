@@ -18,7 +18,7 @@ class Interpreter:
         right = self.evaluate(expr.right)
         if  type(right)==bool : 
              exit(70)
-        if not right.isdigit():
+        if not right.isnumeric():
             exit(70)     
         if expr.operator.lexeme == "-":
             return -right
