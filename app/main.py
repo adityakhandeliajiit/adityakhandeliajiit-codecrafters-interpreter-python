@@ -15,10 +15,10 @@ class Interpreter:
     def visit_grouping_expr(self, expr):
         return self.evaluate(expr.expression) 
     def visit_unary_expr(self, expr):
-        right = self.evaluate(expr.right)
-        if  type(right)==bool or type(right)==str : 
-             exit(70)    
+        right = self.evaluate(expr.right)  
         if expr.operator.lexeme == "-":
+            if  type(right)==bool or type(right)==str : 
+             exit(70)  
             return -right
         elif expr.operator.lexeme == "!":
             return not right
