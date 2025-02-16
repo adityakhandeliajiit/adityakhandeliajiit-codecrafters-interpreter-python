@@ -16,10 +16,8 @@ class Interpreter:
         return self.evaluate(expr.expression) 
     def visit_unary_expr(self, expr):
         right = self.evaluate(expr.right)
-        if  type(right)==bool : 
-             exit(70)
-        if not right.isnumeric():
-            exit(70)     
+        if  type(right)==bool or type(right)==str : 
+             exit(70)    
         if expr.operator.lexeme == "-":
             return -right
         elif expr.operator.lexeme == "!":
