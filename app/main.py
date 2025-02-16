@@ -35,8 +35,12 @@ class Interpreter:
         elif op == "-":
             return left - right
         elif op == "*":
+            if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
+             exit(70)
             return left * right
         elif op == "/":
+            if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
+             exit(70)
             if right == 0:
                 raise Exception("Division by zero.")
             return left / right
