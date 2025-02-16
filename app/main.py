@@ -29,20 +29,21 @@ class Interpreter:
         left = self.evaluate(expr.left)
         right = self.evaluate(expr.right)
         op = expr.operator.lexeme
-        if op !="!=" and op!="==":
-            if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
-                exit(70)
         if op == "+":
+            if  type(right)==bool  or type(left)==bool or (type(left)==str and type(right)!=str) or (type(right)==str and type(left)!=str): 
+                exit(70)
             return left + right
         elif op == "-":
+            if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
+                exit(70)
             return left - right
         elif op == "*":
+            if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
+                exit(70)
             return left * right
         elif op == "/":
-            # if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
-            #  exit(70)
-            # if right == 0:
-            #     raise Exception("Division by zero.")
+            if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
+             exit(70)
             return left / right
         elif op == "==":
             return left == right
