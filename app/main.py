@@ -50,12 +50,20 @@ class Interpreter:
         elif op == "!=":
             return left != right
         elif op == "<":
+            if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
+                exit(70)
             return left < right
         elif op == "<=":
+            if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
+                exit(70)
             return left <= right
         elif op == ">":
+            if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
+                exit(70)
             return left > right
         elif op == ">=":
+            if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
+                exit(70)
             return left >= right    
     def formatted(self,value):
         if value is None:
