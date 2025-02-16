@@ -2,7 +2,8 @@ import sys
 import re
 
 # Global error flag.
-had_error = False
+had_error_parse = False
+had_error_evaluate=False
 class Interpreter:
     def interpret(self,expr):
         value=self.evaluate(expr)
@@ -15,6 +16,9 @@ class Interpreter:
         return self.evaluate(expr.expression) 
     def visit_unary_expr(self, expr):
         right = self.evaluate(expr.right)
+        if not right.isdigit():
+             print("Operand must be a number.")
+             exit(70)
         if expr.operator.lexeme == "-":
             return -right
         elif expr.operator.lexeme == "!":
@@ -243,7 +247,7 @@ def extract_word(sentence, start_index):
     return sentence[start_index:end_index]
 
 def tokenize(file_contents):
-    global had_error  # Use the global error flag.
+    global had_error_parse  # Use the global error flag.
     tokens = []
     i = 0
     keywords = [
@@ -275,7 +279,7 @@ def tokenize(file_contents):
             if end_index == -1:
                 line_number = file_contents.count("\n", 0, i) + 1
                 print(f"[line {line_number}] Error: Unterminated string.", file=sys.stderr)
-                had_error = True
+                had_error_parse = True
                 break
             else:
                 string_value = file_contents[i:end_index + 1]
@@ -337,7 +341,7 @@ def tokenize(file_contents):
         else:
             line_number = file_contents.count("\n", 0, i) + 1
             print(f"[line {line_number}] Error: Unexpected character: {x}", file=sys.stderr)
-            had_error = True  # Mark error when unexpected character is found.
+            had_error_parse = True  # Mark error when unexpected character is found.
         i += 1
     tokens.append(Token("EOF", "", None, 1))
     return tokens
@@ -362,7 +366,7 @@ def main():
     if command == "tokenize":
         for token in tokens:
             print(token)
-        if had_error:
+        if had_error_parse:
             exit(65)
     elif command == "parse":
         parser = Parser(tokens)
