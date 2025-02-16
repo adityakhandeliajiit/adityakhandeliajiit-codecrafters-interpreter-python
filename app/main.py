@@ -52,7 +52,8 @@ class Interpreter:
     def formatted(self,value):
         if value is None:
             return "nil"
-        return str(value)               
+        st=str(value)    
+        return st.lower()               
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
