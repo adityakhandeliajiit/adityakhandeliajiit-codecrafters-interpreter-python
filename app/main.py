@@ -3,7 +3,18 @@ import re
 
 # Global error flag.
 had_error = False
-
+class Interpreter:
+    def interpret(self,expr):
+        value=self.evaluate(expr)
+        print(self.formatted(value))
+    def evaluate(self,expr):
+        return expr.accept(self)
+    def visit_literal_expr(self,expr):
+        return expr.value
+    def formatted(self,value):
+        if value is None:
+            return "nil"
+        return str(value)               
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
@@ -322,6 +333,15 @@ def main():
         printer = AstPrinter()
         result = printer.print(expression)
         print(result)
+    elif command=="evaluate":
+        tokens = tokenize(file_contents)
+        parser = Parser(tokens)
+        expression = parser.parse()
+        if expression is None:
+          exit(65)
+    # Instantiate your interpreter and evaluate the expression.
+        interpreter = Interpreter()
+        interpreter.interpret(expression)   
 
 if __name__ == "__main__":
     main()
