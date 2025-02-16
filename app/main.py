@@ -17,7 +17,7 @@ class Interpreter:
     def visit_unary_expr(self, expr):
         right = self.evaluate(expr.right)
         if not right.isdigit():
-             print("Operand must be a number.")
+            #  print("Operand must be a number.")
              exit(70)
         if expr.operator.lexeme == "-":
             return -right
