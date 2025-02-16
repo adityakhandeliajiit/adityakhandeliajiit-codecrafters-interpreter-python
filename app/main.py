@@ -10,7 +10,45 @@ class Interpreter:
     def evaluate(self,expr):
         return expr.accept(self)
     def visit_literal_expr(self,expr):
-        return expr.value
+        return expr.value    
+    def visit_grouping_expr(self, expr):
+        return self.evaluate(expr.expression) 
+    def visit_unary_expr(self, expr):
+        right = self.evaluate(expr.right)
+        if expr.operator.lexeme == "-":
+            return -right
+        elif expr.operator.lexeme == "!":
+            return not right
+        # For other unary operators, add more branches as needed.
+        return None
+    
+    def visit_binary_expr(self, expr):
+        left = self.evaluate(expr.left)
+        right = self.evaluate(expr.right)
+        op = expr.operator.lexeme
+        
+        if op == "+":
+            return left + right
+        elif op == "-":
+            return left - right
+        elif op == "*":
+            return left * right
+        elif op == "/":
+            if right == 0:
+                raise Exception("Division by zero.")
+            return left / right
+        elif op == "==":
+            return left == right
+        elif op == "!=":
+            return left != right
+        elif op == "<":
+            return left < right
+        elif op == "<=":
+            return left <= right
+        elif op == ">":
+            return left > right
+        elif op == ">=":
+            return left >= right    
     def formatted(self,value):
         if value is None:
             return "nil"
