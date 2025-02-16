@@ -53,11 +53,8 @@ class Interpreter:
         if value is None:
             return "nil"
         if isinstance(value, float) and value.is_integer():
-           value_str = str(int(value))
-        else:
-           value_str = str(value)    
-        value_str=str(value)    
-        return value_str.lower()               
+           return str(int(value))
+        return str(value).lower()               
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
