@@ -400,15 +400,15 @@ def main():
         printer = AstPrinter()
         result = printer.print(expression)
         print(result)
-    elif command=="evaluate":
+    elif command=="evaluate" or command=="run":
         tokens = tokenize(file_contents)
         parser = Parser(tokens)
         expression = parser.parse()
         if expression is None:
           exit(65)
-    # Instantiate your interpreter and evaluate the expression.
         interpreter = Interpreter()
         interpreter.interpret(expression)   
+
 
 if __name__ == "__main__":
     main()
