@@ -4,6 +4,12 @@ import re
 # Global error flag.
 had_error_parse = False
 had_error_evaluate=False
+class print_stmt:
+    def __init__(self,expr):
+        self.expression=expr
+    def accept(self,visitor):
+        return visitor.visit_print_stmt(self)    
+        
 class Interpreter:
     def interpret(self,expr):
         value=self.evaluate(expr)
@@ -65,6 +71,9 @@ class Interpreter:
             if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
                 exit(70)
             return left >= right    
+    def visit_print_stmt(self,stmt):
+        value=self.evaluate(stmt.expression)
+        print(value)        
     def formatted(self,value):
         if value is None:
             return "nil"
@@ -139,7 +148,9 @@ class Parser:
             expr=self.expression()
             if not self.match("RIGHT_PAREN"):
               raise Exception("Expected ')' after expression")
-            return Grouping(expr)   
+            return Grouping(expr)  
+        if self.match("print"):
+            return self.print_stmt(self.expression())
         raise Exception("Expected expression")
 
     def match(self, *types):
