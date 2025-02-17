@@ -86,12 +86,18 @@ class Parser:
         self.current = 0
 
     def parse(self):
-        try:
+        statement=[]
+        while not self.is_at_end():
+            statement.append(self.statement())
+        return statement
+    def statement(self):
+        if self.match("print"):
+            return self.print_stmt()
+        else:
             return self.expression()
-        except Exception as e:
-            self.error(self.peek(), str(e))
-            return None
-
+    def print_stmt(self):
+        expr=self.expression()
+        return print_stmt(expr)                    
     def expression(self):
         return self.equal_equal()
     def equal_equal(self):
@@ -149,8 +155,6 @@ class Parser:
             if not self.match("RIGHT_PAREN"):
               raise Exception("Expected ')' after expression")
             return Grouping(expr)  
-        if self.match("print"):
-            return self.print_stmt(self.expression())
         raise Exception("Expected expression")
 
     def match(self, *types):
