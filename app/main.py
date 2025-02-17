@@ -91,7 +91,7 @@ class Parser:
             statement.append(self.statement())
         return statement
     def statement(self):
-        if self.match("print"):
+        if self.match("PRINT"):
             return self.print_stmt()
         else:
             return self.expression()
