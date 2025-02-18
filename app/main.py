@@ -4,6 +4,11 @@ import re
 # Global error flag.
 had_error_parse = False
 had_error_evaluate=False
+class expr_statement:
+    def __init__(self,expression):
+        self.expression=expression
+    def accept(self,visitor):
+        return visitor.visit_expr_stmt(self)    
 class print_stmt:
     def __init__(self,expr):
         self.expression=expr
@@ -77,7 +82,10 @@ class Interpreter:
             return left >= right    
     def visit_print_stmt(self,stmt):
         value=self.evaluate(stmt.expression)
-        print(self.formatted(value))        
+        print(self.formatted(value)) 
+    def visit_expression_stmt(self, stmt):
+        value = self.evaluate(stmt.expression)
+        print(self.formatted(value))           
     def formatted(self,value):
         if value is None:
             return "nil"
@@ -102,7 +110,12 @@ class Parser:
         if self.match("PRINT"):
             return self.print_stmt()
         else:
-            return self.expression()
+            return self.expr_stmt()
+    def expr_stmt(self):
+        expr=self.expression()
+        if self.check("SEMICOLON"):
+            self.advance()
+        return   expr_statement(expr)          
     def print_stmt(self):
         expr=self.expression()
         self.consume("SEMICOLON","expected ';'")
