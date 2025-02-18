@@ -82,8 +82,7 @@ class Interpreter:
             return left >= right    
     def visit_print_stmt(self,stmt):
         value=self.evaluate(stmt.expression)
-        # print(self.formatted(value))
-        print(value) 
+        print(self.formatted(value)) 
     def visit_expr_stmt(self, stmt):
         value = self.evaluate(stmt.expression)
         print(self.formatted(value))           
@@ -92,7 +91,7 @@ class Interpreter:
             return "nil"
         if isinstance(value, float) and value.is_integer():
            return str(int(value))
-        return str(value).lower()               
+        return str(value).capitalize()               
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
