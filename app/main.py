@@ -93,7 +93,7 @@ class Interpreter:
            return str(int(value))
         if isinstance(value,str) and value[0].isupper():
                 return value.capitalize()   
-        return str(value).tolower()               
+        return str(value).lower()               
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
