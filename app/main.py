@@ -429,8 +429,9 @@ def main():
             exit(65)
         # Print the AST
         printer = AstPrinter()
-        result = printer.print(expression)
-        print(result)
+        for stmt in expression:
+             result = printer.print(stmt)
+             print(result)
     elif command=="evaluate" or command=="run":
         tokens = tokenize(file_contents)
         parser = Parser(tokens)
