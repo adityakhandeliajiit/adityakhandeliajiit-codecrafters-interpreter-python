@@ -8,7 +8,7 @@ class expr_statement:
     def __init__(self,expression):
         self.expression=expression
     def accept(self,visitor):
-        return visitor.visit_expr_stmt(self)    
+        return visitor.visit_print_stmt(self)    
 class print_stmt:
     def __init__(self,expr):
         self.expression=expr
