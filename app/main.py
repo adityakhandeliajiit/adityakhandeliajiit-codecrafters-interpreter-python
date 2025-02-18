@@ -91,8 +91,7 @@ class Interpreter:
             return "nil"
         if isinstance(value, float) and value.is_integer():
            return str(int(value))
-        if isinstance(value,str):
-            if value[0].islower():
+        if isinstance(value,str) and value[0].isupper():
                 return value.capitalize()   
         return str(value).tolower()               
 class Parser:
