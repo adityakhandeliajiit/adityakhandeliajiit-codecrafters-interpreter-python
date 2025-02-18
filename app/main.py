@@ -11,9 +11,13 @@ class print_stmt:
         return visitor.visit_print_stmt(self)    
         
 class Interpreter:
-    def interpret(self,expr):
-        value=self.evaluate(expr)
-        print(self.formatted(value))
+    def interpret(self,statements):
+        for stmt in statements:
+            self.execute(stmt)
+    def accept(self,stmt):
+        stmt.accept(self)     
+    def execute(self,stmt):
+        stmt.accept(self)       
     def evaluate(self,expr):
         return expr.accept(self)
     def visit_literal_expr(self,expr):
@@ -73,7 +77,7 @@ class Interpreter:
             return left >= right    
     def visit_print_stmt(self,stmt):
         value=self.evaluate(stmt.expression)
-        print(value)        
+        print(self.formatted(value))        
     def formatted(self,value):
         if value is None:
             return "nil"
