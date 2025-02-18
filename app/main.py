@@ -91,7 +91,10 @@ class Interpreter:
             return "nil"
         if isinstance(value, float) and value.is_integer():
            return str(int(value))
-        return str(value).capitalize()               
+        if isinstance(value,str):
+            if value[0].is_lower():
+                return value.capitalize()   
+        return str(value).tolower()               
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
