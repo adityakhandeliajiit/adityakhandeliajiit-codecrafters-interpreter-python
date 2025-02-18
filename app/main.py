@@ -82,7 +82,8 @@ class Interpreter:
             return left >= right    
     def visit_print_stmt(self,stmt):
         value=self.evaluate(stmt.expression)
-        print(self.formatted(value)) 
+        # print(self.formatted(value))
+        print(value) 
     def visit_expr_stmt(self, stmt):
         value = self.evaluate(stmt.expression)
         print(self.formatted(value))           
