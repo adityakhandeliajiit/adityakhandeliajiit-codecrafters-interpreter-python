@@ -186,6 +186,10 @@ class Parser:
 
     def previous(self):
         return self.tokens[self.current - 1]
+    def consume(self, token_type, message):
+        if self.check(token_type):
+            return self.advance()
+        raise Exception(message)    
 
     def error(self, token, message):
         print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
@@ -249,7 +253,8 @@ class AstPrinter:
 
     def visit_unary_expr(self, expr):
         return self.parenthesize(expr.operator.lexeme, expr.right)
-
+    def visit_print_stmt(self, stmt):   
+        return "print " + self.parenthesize("", stmt.expression) 
     def parenthesize(self, name, *exprs):
         builder = []
         builder.append("(")
