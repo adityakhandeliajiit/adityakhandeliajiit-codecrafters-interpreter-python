@@ -101,6 +101,7 @@ class Parser:
             return self.expression()
     def print_stmt(self):
         expr=self.expression()
+        self.consume("SEMICOLON","expected ';'")
         return print_stmt(expr)                    
     def expression(self):
         return self.equal_equal()
