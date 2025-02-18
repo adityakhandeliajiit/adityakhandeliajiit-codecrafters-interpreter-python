@@ -272,7 +272,7 @@ class AstPrinter:
     def visit_unary_expr(self, expr):
         return self.parenthesize(expr.operator.lexeme, expr.right)
     def visit_print_stmt(self, stmt):   
-        return "print " + self.parenthesize("", stmt.expression) 
+            return stmt.expression.accept(self)
     def parenthesize(self, name, *exprs):
         builder = []
         builder.append("(")
