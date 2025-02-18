@@ -83,7 +83,7 @@ class Interpreter:
     def visit_print_stmt(self,stmt):
         value=self.evaluate(stmt.expression)
         print(self.formatted(value)) 
-    def visit_expression_stmt(self, stmt):
+    def visit_expr_stmt(self, stmt):
         value = self.evaluate(stmt.expression)
         print(self.formatted(value))           
     def formatted(self,value):
