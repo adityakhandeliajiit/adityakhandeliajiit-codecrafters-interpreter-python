@@ -423,6 +423,8 @@ def main():
             exit(65)
     elif command == "parse":
         parser = Parser(tokens)
+        if had_error_parse:
+            exit(65)
         expression = parser.parse()
         if expression is None:
             exit(65)
