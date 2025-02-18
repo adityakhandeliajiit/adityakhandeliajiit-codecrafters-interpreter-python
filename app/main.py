@@ -92,7 +92,7 @@ class Interpreter:
         if isinstance(value, float) and value.is_integer():
            return str(int(value))
         if isinstance(value,str):
-            if value[0].is_lower():
+            if value[0].islower():
                 return value.capitalize()   
         return str(value).tolower()               
 class Parser:
