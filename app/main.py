@@ -90,10 +90,14 @@ class Parser:
         self.current = 0
 
     def parse(self):
-        statement=[]
-        while not self.is_at_end():
-            statement.append(self.statement())
-        return statement
+        statements = []
+        try:
+            while not self.is_at_end():
+                statements.append(self.statement())
+            return statements
+        except Exception as e:
+            self.error(self.peek(), str(e))
+            return None
     def statement(self):
         if self.match("PRINT"):
             return self.print_stmt()
