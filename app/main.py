@@ -416,7 +416,8 @@ def main():
         file_contents = file.read()
 
     tokens = tokenize(file_contents)
-
+    if had_error_parse:
+        exit(65)
     if command == "tokenize":
         for token in tokens:
             print(token)
