@@ -22,9 +22,9 @@ class vardec_stmt:
         return visitor.visit_vardec_stmt(self)    
         
 class Interpreter:
-    def __init__(self,mode,enviorment):
+    def __init__(self,mode,enviroment):
         self.mode=mode
-        self.enviorment={}
+        self.enviroment={}
     def interpret(self,statements):
         for stmt in statements:
             self.execute(stmt)
@@ -465,12 +465,12 @@ def main():
         expression = parser.parse()
         if expression is None:
           exit(65)
-        enviorment={}  
+        enviroment={}  
         if command=="evaluate":
-            interpreter=Interpreter("evaluate",enviorment)
+            interpreter=Interpreter("evaluate",enviroment)
             interpreter.interpret(expression)
         elif command=="run":
-            interpreter=Interpreter("run",enviorment)
+            interpreter=Interpreter("run",enviroment)
             interpreter.interpret(expression)   
 
 
