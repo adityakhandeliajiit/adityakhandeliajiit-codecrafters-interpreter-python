@@ -14,10 +14,17 @@ class print_stmt:
         self.expression=expr
     def accept(self,visitor):
         return visitor.visit_print_stmt(self)    
+class vardec_stmt:
+    def __init__(self,name,initializer):
+        self.name=name
+        self.initializer=initializer
+    def accept(self,visitor):
+        return visitor.visit_vardec_stmt(self)    
         
 class Interpreter:
-    def __init__(self,mode):
+    def __init__(self,mode,enviorment):
         self.mode=mode
+        self.enviorment={}
     def interpret(self,statements):
         for stmt in statements:
             self.execute(stmt)
@@ -88,7 +95,12 @@ class Interpreter:
     def visit_expr_stmt(self, stmt):
         value=self.evaluate(stmt.expression)
         if self.mode=="evaluate":
-            print(self.formatted(value))         
+            print(self.formatted(value))
+    def visit_vardec_stmt(self,stmt):
+        value=None
+        if stmt.initializer is not None:
+            value=self.evaluate(stmt.initializer)
+        self.enviroment[stmt.name.lexeme]=value                     
     def formatted(self,value):
         if value is None:
             return "nil"
@@ -114,6 +126,8 @@ class Parser:
     def statement(self):
         if self.match("PRINT"):
             return self.print_stmt()
+        elif self.match("VAR"):
+            return self.var_declaration()    
         else:
             return self.expr_stmt()
     def expr_stmt(self):
@@ -124,7 +138,14 @@ class Parser:
     def print_stmt(self):
         expr=self.expression()
         self.consume("SEMICOLON","expected ';'")
-        return print_stmt(expr)                    
+        return print_stmt(expr) 
+    def var_declaration(self):
+        name=self.consume("IDENTIFIER","Expect variable name")
+        initializer=None
+        if self.match("EQUAL"):
+            initializer=self.expression()
+        self.consume("SEMICOLON","expect ;")
+        return vardec_stmt(name,initializer)  
     def expression(self):
         return self.equal_equal()
     def equal_equal(self):
@@ -444,11 +465,12 @@ def main():
         expression = parser.parse()
         if expression is None:
           exit(65)
+        enviorment={}  
         if command=="evaluate":
-            interpreter=Interpreter("evaluate")
+            interpreter=Interpreter("evaluate",enviorment)
             interpreter.interpret(expression)
         elif command=="run":
-            interpreter=Interpreter("run")
+            interpreter=Interpreter("run",enviorment)
             interpreter.interpret(expression)   
 
 
