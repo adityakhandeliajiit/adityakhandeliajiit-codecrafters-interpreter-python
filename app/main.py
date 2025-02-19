@@ -85,7 +85,8 @@ class Interpreter:
         print(self.formatted(value)) 
     def visit_expr_stmt(self, stmt):
         value = self.evaluate(stmt.expression)
-        print(self.formatted(value))           
+        return value
+        # print(self.formatted(value))           
     def formatted(self,value):
         if value is None:
             return "nil"
