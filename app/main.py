@@ -446,9 +446,10 @@ def main():
           exit(65)
         if command=="evaluate":
             interpreter=Interpreter("evaluate")
+            interpreter.interpret(expression)
         elif command=="run":
-            interpreter=Interpreter("run")     
-        interpreter.interpret(expression)   
+            interpreter=Interpreter("run")
+            interpreter.interpret(expression)   
 
 
 if __name__ == "__main__":
