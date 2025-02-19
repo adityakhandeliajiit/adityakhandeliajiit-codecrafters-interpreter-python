@@ -16,6 +16,8 @@ class print_stmt:
         return visitor.visit_print_stmt(self)    
         
 class Interpreter:
+    def __init__(self,mode):
+        self.mode=mode
     def interpret(self,statements):
         for stmt in statements:
             self.execute(stmt)
@@ -84,8 +86,9 @@ class Interpreter:
         value=self.evaluate(stmt.expression)
         print(self.formatted(value)) 
     def visit_expr_stmt(self, stmt):
-        value=self.evaluate(stmt.expression)
-        print(self.formatted(value))         
+        if self.mode=="evaluate":
+            value=self.evaluate(stmt.expression)
+            print(self.formatted(value))         
     def formatted(self,value):
         if value is None:
             return "nil"
@@ -441,7 +444,10 @@ def main():
         expression = parser.parse()
         if expression is None:
           exit(65)
-        interpreter = Interpreter()
+        if command=="evaluate":
+            interpreter=Interpreter("evaluate")
+        elif command=="run":
+            interpreter=Interpreter("run")     
         interpreter.interpret(expression)   
 
 
