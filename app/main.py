@@ -154,7 +154,7 @@ class Parser:
         if isinstance(expr,Variable):
             return assignment(expr.name,value)
         else:
-            self.error("Invalid assignment")
+            self.error(equals,"Invalid assignment")
         return expr              
     def statement(self):
         if self.match("PRINT"):
