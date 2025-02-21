@@ -4,6 +4,11 @@ import re
 # Global error flag.
 had_error_parse = False
 had_error_evaluate=False
+class Variable:
+    def __init__(self, name):
+        self.name = name  # a Token
+    def accept(self, visitor):
+        return visitor.visit_variable_expr(self)
 class expr_statement:
     def __init__(self,expression):
         self.expression=expression
@@ -196,8 +201,9 @@ class Parser:
         if self.match("STRING"):
             return Literal(self.previous().literal)  # Pass the literal value
         # Handle other literals and expressions...
-        if self.match("IDENTIFIER"):  # <-- new handling for bare identifiers
-            return Literal(self.previous().lexeme)
+        if self.match("IDENTIFIER"):
+            return Variable(self.previous())
+
         if self.match("LEFT_PAREN"):
             expr=self.expression()
             if not self.match("RIGHT_PAREN"):
