@@ -4,6 +4,12 @@ import re
 # Global error flag.
 had_error_parse = False
 had_error_evaluate=False
+class assignment:
+    def __init__(self,name,value):
+        self.name=name
+        self.value=value
+    def accept(self,visitor):
+        return visitor.vist_assign_expr(self)    
 class Variable:
     def __init__(self, name):
         self.name = name  # a Token
@@ -110,7 +116,14 @@ class Interpreter:
         if expr.name.lexeme in self.enviroment:
            return self.enviroment[expr.name.lexeme]
         else:
-          exit(70)                         
+          exit(70)  
+    def visit_assign_expr(self, expr):
+        value = self.evaluate(expr.value)
+        if expr.name.lexeme in self.environment:
+            self.environment[expr.name.lexeme] = value
+        else:
+            exit(70)  
+        return value                             
     def formatted(self,value):
         if value is None:
             return "nil"
@@ -133,6 +146,16 @@ class Parser:
         except Exception as e:
             self.error(self.peek(), str(e))
             return None
+    def assignment(self):
+        expr=self.equal_equal()
+        if self.match("EQUAL"):
+            equals=self.previous()
+            value=self.assignment()
+        if isinstance(expr,Variable):
+            return assignment(expr.name,value)
+        else:
+            self.error("Invalid assignment")
+        return expr              
     def statement(self):
         if self.match("PRINT"):
             return self.print_stmt()
@@ -157,7 +180,7 @@ class Parser:
         self.consume("SEMICOLON","expect ;")
         return vardec_stmt(name,initializer)  
     def expression(self):
-        return self.equal_equal()
+        return self.assignment()
     def equal_equal(self):
         expr=self.comparison()
         while self.match("EQUAL_EQUAL","BANG_EQUAL"):
