@@ -151,10 +151,10 @@ class Parser:
         if self.match("EQUAL"):
             equals=self.previous()
             value=self.assignment()
-        if isinstance(expr,Variable):
-            return assignment(expr.name,value)
-        else:
-            self.error(equals,"Invalid assignment")
+            if isinstance(expr,Variable):
+               return assignment(expr.name,value)
+            else:
+               self.error(equals,"Invalid assignment")
         return expr              
     def statement(self):
         if self.match("PRINT"):
