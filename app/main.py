@@ -105,7 +105,12 @@ class Interpreter:
         value=None
         if stmt.initializer is not None:
             value=self.evaluate(stmt.initializer)
-        self.enviroment[stmt.name.lexeme]=value                     
+        self.enviroment[stmt.name.lexeme]=value
+    def visit_variable_expr(self, expr):
+        if expr.name.lexeme in self.enviroment:
+           return self.enviroment[expr.name.lexeme]
+        else:
+          exit(70)                         
     def formatted(self,value):
         if value is None:
             return "nil"
