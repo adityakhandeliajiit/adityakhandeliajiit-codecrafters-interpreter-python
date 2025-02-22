@@ -184,7 +184,7 @@ class Parser:
     def block(self):
        statements = []
        while not self.check("RIGHT_BRACE") and not self.is_at_end():
-            statements.append(self.declaration()) 
+            statements.append(self.statement()) 
        self.consume("RIGHT_BRACE", "Expected '}' after block.")
        return BlockStmt(statements)                 
     def statement(self):
