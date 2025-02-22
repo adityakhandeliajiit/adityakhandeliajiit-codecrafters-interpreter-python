@@ -142,10 +142,7 @@ class Interpreter:
            return self.enviroment.get(expr.name.lexeme)
     def visit_assign_expr(self, expr):
         value = self.evaluate(expr.value)
-        if expr.name.lexeme in self.enviroment:
-            self.enviroment.assign(expr.name.lexeme,value)
-        else:
-            exit(70)  
+        self.enviroment.assign(expr.name.lexeme,value)
         return value   
     def visit_block_stmt(self,stmt):
         previous=self.enviroment
