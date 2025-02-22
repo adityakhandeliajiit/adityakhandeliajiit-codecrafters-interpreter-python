@@ -61,7 +61,7 @@ class vardec_stmt:
 class Interpreter:
     def __init__(self,mode,enviroment):
         self.mode=mode
-        self.enviroment={}
+        self.enviroment=enviroment
     def interpret(self,statements):
         for stmt in statements:
             self.execute(stmt)
