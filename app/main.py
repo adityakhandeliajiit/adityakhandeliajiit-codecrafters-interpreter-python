@@ -4,6 +4,25 @@ import re
 # Global error flag.
 had_error_parse = False
 had_error_evaluate=False
+class Enviroment:
+    def __init__(self, enclosing=None):
+        self.values = {}
+        self.enclosing = enclosing
+
+    def define(self, name, value):
+        self.values[name] = value
+
+    def get(self, name):
+        if name in self.values:
+            return self.values[name]
+        if self.enclosing is not None:
+            return self.enclosing.get(name)
+        raise RuntimeError(f"Undefined variable '{name}'.")
+class BlockStmt:
+    def __init__(self,statement):
+        self.statement=statement
+    def accept(self,visitor):
+        return visitor.visit_block_stmt(self)    
 class assignment:
     def __init__(self,name,value):
         self.name=name
@@ -123,7 +142,13 @@ class Interpreter:
             self.enviroment[expr.name.lexeme] = value
         else:
             exit(70)  
-        return value                             
+        return value   
+    def visit_block_stmt(self,stmt):
+        previous=self.enviroment
+        self.enviroment=Enviroment(previous)
+        for statement in stmt.statements:
+            self.execute(statement)
+        self.enviroment=previous    
     def formatted(self,value):
         if value is None:
             return "nil"
@@ -155,7 +180,13 @@ class Parser:
                return assignment(expr.name,value)
             else:
                self.error(equals,"Invalid assignment")
-        return expr              
+        return expr 
+    def block(self):
+       statements = []
+       while not self.check("RIGHT_BRACE") and not self.is_at_end():
+            statements.append(self.declaration()) 
+       self.consume("RIGHT_BRACE", "Expected '}' after block.")
+       return BlockStmt(statements)                 
     def statement(self):
         if self.match("PRINT"):
             return self.print_stmt()
