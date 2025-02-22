@@ -4,6 +4,15 @@ import re
 # Global error flag.
 had_error_parse = False
 had_error_evaluate=False
+class ifbranch:
+    def __init__(self,condition,thenbr,elsebr):
+        self.condition=condition
+        self.thenbr=thenbr
+        self.elsebr=elsebr
+    def accept(self,visitor):
+        return visitor.visit_ifbr_stmt(self)   
+
+        
 class Enviroment:
     def __init__(self, enclosing=None):
         self.values = {}
@@ -71,6 +80,8 @@ class Interpreter:
         stmt.accept(self)       
     def evaluate(self,expr):
         return expr.accept(self)
+    def is_truthy(self,value):
+        return value is not None and value is not False
     def visit_literal_expr(self,expr):
         return expr.value    
     def visit_grouping_expr(self, expr):
@@ -155,7 +166,13 @@ class Interpreter:
         self.enviroment=Enviroment(previous)
         for statement in stmt.statement:
             self.execute(statement)
-        self.enviroment=previous    
+        self.enviroment=previous
+    def visit_ifbr_stmt(self,stmt):
+        condition=self.evaluate(stmt.condition)
+        if self.is_truthy(condition):
+            self.execute(stmt.thenbr)
+        elif stmt.elsebr is not None:
+            self.execute(stmt.elsebr)        
     def formatted(self,value):
         if value is None:
             return "nil"
@@ -193,8 +210,19 @@ class Parser:
        while not self.check("RIGHT_BRACE") and not self.is_at_end():
             statements.append(self.statement()) 
        self.consume("RIGHT_BRACE", "Expected '}' after block.")
-       return BlockStmt(statements)                 
+       return BlockStmt(statements)   
+    def conditional(self):
+        self.consume("LEFT_PAREN","Expected '(' before if")
+        condition=self.expression()
+        self.consume("RIGHT_PAREN","Expected ')' after if") 
+        thenbr=self.statement()
+        elsebranch=None
+        if(self.match("ELSE")):
+            elsebranch=self.statement()
+        return ifbranch(condition,thenbr,elsebranch)                        
     def statement(self):
+        if self.match("IF"):
+            return self.conditional()
         if self.match("LEFT_BRACE"):
             return self.block()
         if self.match("PRINT"):
