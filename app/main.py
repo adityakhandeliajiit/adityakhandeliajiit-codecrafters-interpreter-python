@@ -178,8 +178,8 @@ class Interpreter:
             return "nil"
         if isinstance(value, float) and value.is_integer():
            return str(int(value))
-        if isinstance(value,str) and value[0].isupper():
-                return value.capitalize()   
+        if isinstance(value,str): 
+                return value  
         return str(value).lower()               
 class Parser:
     def __init__(self, tokens):
