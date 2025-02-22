@@ -188,6 +188,8 @@ class Parser:
        self.consume("RIGHT_BRACE", "Expected '}' after block.")
        return BlockStmt(statements)                 
     def statement(self):
+        if self.match("LEFT_BRACE"):
+            return self.block()
         if self.match("PRINT"):
             return self.print_stmt()
         elif self.match("VAR"):
