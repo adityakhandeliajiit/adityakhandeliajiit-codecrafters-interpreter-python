@@ -146,7 +146,7 @@ class Interpreter:
     def visit_block_stmt(self,stmt):
         previous=self.enviroment
         self.enviroment=Enviroment(previous)
-        for statement in stmt.statements:
+        for statement in stmt.statement:
             self.execute(statement)
         self.enviroment=previous    
     def formatted(self,value):
