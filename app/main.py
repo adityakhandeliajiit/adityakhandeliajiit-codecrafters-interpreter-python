@@ -119,8 +119,8 @@ class Interpreter:
           exit(70)  
     def visit_assign_expr(self, expr):
         value = self.evaluate(expr.value)
-        if expr.name.lexeme in self.environment:
-            self.environment[expr.name.lexeme] = value
+        if expr.name.lexeme in self.enviroment:
+            self.enviroment[expr.name.lexeme] = value
         else:
             exit(70)  
         return value                             
