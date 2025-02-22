@@ -9,7 +9,7 @@ class assignment:
         self.name=name
         self.value=value
     def accept(self,visitor):
-        return visitor.vist_assign_expr(self)    
+        return visitor.visit_assign_expr(self)    
 class Variable:
     def __init__(self, name):
         self.name = name  # a Token
