@@ -18,6 +18,13 @@ class Enviroment:
         if self.enclosing is not None:
             return self.enclosing.get(name)
         raise RuntimeError(f"Undefined variable '{name}'.")
+    def assign(self, name, value):
+        if name in self.values:
+            self.values[name] = value
+        elif self.enclosing is not None:
+            self.enclosing.assign(name, value)
+        else:
+            raise RuntimeError(f"Undefined variable '{name}'.")    
 class BlockStmt:
     def __init__(self,statement):
         self.statement=statement
@@ -130,16 +137,16 @@ class Interpreter:
         value=None
         if stmt.initializer is not None:
             value=self.evaluate(stmt.initializer)
-        self.enviroment[stmt.name.lexeme]=value
+        self.enviroment.define(stmt.name.lexeme,value)
     def visit_variable_expr(self, expr):
         if expr.name.lexeme in self.enviroment:
-           return self.enviroment[expr.name.lexeme]
+           return self.enviroment.get(expr.name.lexeme)
         else:
           exit(70)  
     def visit_assign_expr(self, expr):
         value = self.evaluate(expr.value)
         if expr.name.lexeme in self.enviroment:
-            self.enviroment[expr.name.lexeme] = value
+            self.enviroment.assign(expr.name.lexeme,value)
         else:
             exit(70)  
         return value   
@@ -532,7 +539,7 @@ def main():
         expression = parser.parse()
         if expression is None:
           exit(65)
-        enviroment={}  
+        enviroment=Enviroment() 
         if command=="evaluate":
             interpreter=Interpreter("evaluate",enviroment)
             interpreter.interpret(expression)
