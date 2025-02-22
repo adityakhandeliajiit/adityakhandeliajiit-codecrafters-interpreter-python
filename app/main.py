@@ -139,7 +139,10 @@ class Interpreter:
             value=self.evaluate(stmt.initializer)
         self.enviroment.define(stmt.name.lexeme,value)
     def visit_variable_expr(self, expr):
-           return self.enviroment.get(expr.name.lexeme)
+        try:
+            return self.enviroment.get(expr.name.lexeme)
+        except RuntimeError:
+            exit(70)
     def visit_assign_expr(self, expr):
         value = self.evaluate(expr.value)
         try:
