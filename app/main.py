@@ -7,8 +7,9 @@ had_error_evaluate=False
 class Logical:
     def __init__(self,left,right,operator):
         self.left=left
-        self.right=right
         self.operator=operator
+        self.right=right
+
     def accept(self,visitor):
         return visitor.visit_logical_expr(self)    
 class ifbranch:
