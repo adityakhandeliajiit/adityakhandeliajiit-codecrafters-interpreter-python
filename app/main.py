@@ -181,7 +181,7 @@ class Interpreter:
         elif stmt.elsebr is not None:
             self.execute(stmt.elsebr)   
     def visit_logical_expr(self,expr):
-        left=self.evaluate(expr,left)
+        left=self.evaluate(expr.left)
         if expr.operator.type=="OR":
             if self.is_truthy(left):
                 return left 
