@@ -182,7 +182,7 @@ class Interpreter:
             self.execute(stmt.elsebr)   
     def visit_logical_expr(self,expr):
         left=self.evaluate(expr.left)
-        if expr.operator.lexemme=="OR":
+        if expr.operator.type=="OR":
             if self.is_truthy(left):
                 return left 
         return self.evaluate(expr.right)                    
