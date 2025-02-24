@@ -241,6 +241,10 @@ class Parser:
             elsebranch=self.statement()
         return ifbranch(condition,thenbr,elsebranch)                        
     def statement(self):
+        if self.match("OR"):
+            operator=self.previous()
+            right=self.equal_equal()
+            expr=Logical(expr,operator,right)
         if self.match("IF"):
             return self.conditional()
         if self.match("LEFT_BRACE"):
