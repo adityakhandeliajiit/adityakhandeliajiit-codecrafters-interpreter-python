@@ -186,6 +186,9 @@ class Interpreter:
         if expr.operator.type=="OR":
             if self.is_truthy(left):
                 return left 
+        if expr.operator.type=="AND":
+            if not self.is_truthy(left):
+                return left    
         return self.evaluate(expr.right)                    
     def formatted(self,value):
         if value is None:
@@ -210,8 +213,15 @@ class Parser:
             self.error(self.peek(), str(e))
             return None
     def or_expr(self):
-        expr = self.equal_equal()  # Assume you have and_expr() for higher precedence (or use equal_equal() if no "and").
+        expr = self.and_expr()  # Assume you have and_expr() for higher precedence (or use equal_equal() if no "and").
         while self.match("OR"):
+            operator = self.previous()
+            right = self.and_expr()
+            expr = Logical(expr, operator, right)
+        return expr  
+    def and_expr(self):
+        expr = self.equal_equal()  # Assume you have and_expr() for higher precedence (or use equal_equal() if no "and").
+        while self.match("AND"):
             operator = self.previous()
             right = self.equal_equal()
             expr = Logical(expr, operator, right)
