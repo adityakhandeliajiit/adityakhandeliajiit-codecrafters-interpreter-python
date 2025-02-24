@@ -10,7 +10,7 @@ class Logical:
         self.right=right
         self.operator=operator
     def accept(self,visitor):
-        return visitor.visit_logic_expr(self)    
+        return visitor.visit_logical_expr(self)    
 class ifbranch:
     def __init__(self,condition,thenbr,elsebr):
         self.condition=condition
