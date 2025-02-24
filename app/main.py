@@ -4,6 +4,13 @@ import re
 # Global error flag.
 had_error_parse = False
 had_error_evaluate=False
+class Logical:
+    def __init__(self,left,right,operator):
+        self.left=left
+        self.right=right
+        self.operator=operator
+    def accept(self,visitor):
+        return visitor.visit_logic_expr(self)    
 class ifbranch:
     def __init__(self,condition,thenbr,elsebr):
         self.condition=condition
@@ -172,7 +179,13 @@ class Interpreter:
         if self.is_truthy(condition):
             self.execute(stmt.thenbr)
         elif stmt.elsebr is not None:
-            self.execute(stmt.elsebr)        
+            self.execute(stmt.elsebr)   
+    def visit_logical_expr(self,expr):
+        left=self.evaluate(expr.left)
+        if expr.operator.type=="OR":
+            if self.is_truthy(left):
+                return left 
+        return self.evaluate(expr.right)                    
     def formatted(self,value):
         if value is None:
             return "nil"
@@ -195,8 +208,15 @@ class Parser:
         except Exception as e:
             self.error(self.peek(), str(e))
             return None
+    def or_expr(self):
+        expr = self.equal_equal()  # Assume you have and_expr() for higher precedence (or use equal_equal() if no "and").
+        while self.match("OR"):
+            operator = self.previous()
+            right = self.equal_equal()
+            expr = Logical(expr, operator, right)
+        return expr        
     def assignment(self):
-        expr=self.equal_equal()
+        expr=self.or_expr()
         if self.match("EQUAL"):
             equals=self.previous()
             value=self.assignment()
