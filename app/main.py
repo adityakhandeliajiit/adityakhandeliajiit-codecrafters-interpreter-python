@@ -5,7 +5,7 @@ import re
 had_error_parse = False
 had_error_evaluate=False
 class Logical:
-    def __init__(self,left,right,operator):
+    def __init__(self,left,operator,right):
         self.left=left
         self.operator=operator
         self.right=right
