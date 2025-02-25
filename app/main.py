@@ -414,7 +414,7 @@ class Parser:
     def consume(self, token_type, message):
         if self.check(token_type):
             return self.advance()
-        raise Exception(message)    
+        self.error(message)    
 
     def error(self, token, message):
         print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
