@@ -195,9 +195,9 @@ class Interpreter:
             if not self.is_truthy(left):
                 return left    
         return self.evaluate(expr.right) 
-    def visit_while_stmt(self,condition,body):
-        while(self.is_truthy(self.evaluate(condition))):
-            self.execute(self.body)
+    def visit_while_stmt(self,stmt):
+        while(self.is_truthy(self.evaluate(stmt.condition))):
+            self.execute(stmt.body)
         return None    
     def formatted(self,value):
         if value is None:
