@@ -195,7 +195,7 @@ class Interpreter:
             if not self.is_truthy(left):
                 return left    
         return self.evaluate(expr.right) 
-    def visit_while_stmt(self,condition,body):
+    def visit_while_stmt(self,condition):
         while(self.is_truthy(self.evaluate(condition))):
             self.execute(self.body)
         return None    
