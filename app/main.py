@@ -265,8 +265,34 @@ class Parser:
         condition=self.expression()
         self.consume("RIGHT_PAREN","EXpected ')'")
         body=self.statement()
-        return while_exp(condition,body)                        
+        return while_exp(condition,body)
+    def for_stmt(self):
+        self.consume("LEFT_PAREN","expected '('")
+        if self.match("SEMICOLON"):
+            initializer=None
+        elif self.match("VAR"):
+            initializer=self.var_declaration()
+        else:
+            initializer=self.expr_stmt()
+        condition=None 
+        if not self.check("SEMICOLON"):
+            condition=self.expression()
+        else:
+            condition=Literal(True)
+        self.consume("SEMICOLON","Expected ';' after loop condition")
+        increment=None
+        if not self.check("RIGHT_PAREN"):
+            increment=self.expression()
+        self.consume("RIGHT_PAREN","Expected ') after for clauses'")
+        if increment is not None:
+            body=BlockStmt([body,expr_statement(increment)])
+        body=while_exp(condition,body)    
+        if initializer is not None:
+            body=BlockStmt([initializer,body])
+        return body                           
     def statement(self):
+        if self.match("FOR"):
+            return self.for_expr()
         if self.match("WHILE"):
             return self.while_expr()
         if self.match("OR"):
