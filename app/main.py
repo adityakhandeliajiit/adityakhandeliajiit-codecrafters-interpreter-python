@@ -19,7 +19,12 @@ class ifbranch:
         self.elsebr=elsebr
     def accept(self,visitor):
         return visitor.visit_ifbr_stmt(self)   
-
+class while_exp:
+    def __init__(self,condition,body):
+        self.condition=condition
+        self.body=body
+    def accept(self,visitor):
+        return visitor.visit_while_stmt(self) 
         
 class Enviroment:
     def __init__(self, enclosing=None):
@@ -189,7 +194,11 @@ class Interpreter:
         if expr.operator.type=="AND":
             if not self.is_truthy(left):
                 return left    
-        return self.evaluate(expr.right)                    
+        return self.evaluate(expr.right) 
+    def visit_while_stmt(self,condition,body):
+        while(self.is_truthy(self.evaluate(condition))):
+            self.execute(self.body)
+        return None    
     def formatted(self,value):
         if value is None:
             return "nil"
@@ -250,8 +259,16 @@ class Parser:
         elsebranch=None
         if(self.match("ELSE")):
             elsebranch=self.statement()
-        return ifbranch(condition,thenbr,elsebranch)                        
+        return ifbranch(condition,thenbr,elsebranch)
+    def while_expr(self):
+        self.consume("LEFT_PAREN","EXpected '('")
+        condition=self.expression()
+        self.consume("RIGHT_PAREN","EXpected ')'")
+        body=self.statement()
+        return while_exp(condition,body)                        
     def statement(self):
+        if self.match("WHILE"):
+            return self.while_expr()
         if self.match("OR"):
             operator=self.previous()
             right=self.equal_equal()
