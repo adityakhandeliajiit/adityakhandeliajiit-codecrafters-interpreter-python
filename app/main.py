@@ -284,6 +284,7 @@ class Parser:
         if not self.check("RIGHT_PAREN"):
             increment=self.expression()
         self.consume("RIGHT_PAREN","Expected ') after for clauses'")
+        body=self.statement()
         if increment is not None:
             body=BlockStmt([body,expr_statement(increment)])
         body=while_exp(condition,body)    
