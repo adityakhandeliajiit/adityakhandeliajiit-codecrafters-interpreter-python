@@ -285,6 +285,8 @@ class Parser:
             increment=self.expression()
         self.consume("RIGHT_PAREN","Expected ') after for clauses'")
         body=self.statement()
+        if isinstance(body, vardec_stmt):
+            self.error(self.previous(), "Variable declarations must be wrapped in a block in a for-loop.")
         if increment is not None:
             body=BlockStmt([body,expr_statement(increment)])
         body=while_exp(condition,body)    
