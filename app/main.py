@@ -419,9 +419,9 @@ class Parser:
         self.error(message)    
 
     def error(self, token, message):
-        # print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
-        # return Exception()
-        raise Exception(f"[line {token.line}] Error at '{token.lexeme}': {message}")
+        print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
+        return Exception()
+        #raise Exception(f"[line {token.line}] Error at '{token.lexeme}': {message}")
 
 class Expr:
     def accept(self, visitor):
