@@ -292,7 +292,7 @@ class Parser:
         return body                           
     def statement(self):
         if self.match("FOR"):
-            return self.for_expr()
+            return self.for_stmt()
         if self.match("WHILE"):
             return self.while_expr()
         if self.match("OR"):
