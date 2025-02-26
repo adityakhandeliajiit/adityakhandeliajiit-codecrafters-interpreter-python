@@ -36,8 +36,9 @@ class LoxFunction(Callable):
 
     def arity(self):
         return len(self.declaration.params)
+
     def __str__(self):
-        return "<fn " + self.declaration.name.lexeme + ">"
+        return f"<fn {self.declaration.name.lexeme}>"
 
     def call(self, interpreter, arguments):
         environment = Enviroment(self.closure)
@@ -273,20 +274,22 @@ class Interpreter:
     def visit_function_stmt(self, stmt):
         function = LoxFunction(stmt, self.enviroment)
         self.enviroment.define(stmt.name.lexeme, function)
-        return None
-    def visit_return_stmt(self,stmt):
-        value=None
+        return function  # Return the function object
+        
+    def visit_return_stmt(self, stmt):
+        value = None
         if stmt.value is not None:
-            value=self.evaluate(stmt.value)
-        raise Return(value)    
+            value = self.evaluate(stmt.value)
+        raise Return(value)
+        
     def execute_block(self, statements, environment):
-            previous = self.enviroment
-            try:
-                self.enviroment = environment
-                for statement in statements:
-                    self.execute(statement)
-            finally:
-                self.enviroment = previous    
+        previous = self.enviroment
+        try:
+            self.enviroment = environment
+            for statement in statements:
+                self.execute(statement)
+        finally:
+            self.enviroment = previous
     def formatted(self,value):
         if value is None:
             return "nil"
@@ -559,10 +562,9 @@ class Expr:
 class Literal(Expr):
     def __init__(self, value):
         self.value = value
-        self.right = right
 
     def accept(self, visitor):
-        return visitor.visit_binary_expr(self)
+        return visitor.visit_literal_expr(self)
 
 class Grouping(Expr):
     def __init__(self, expression):
