@@ -248,7 +248,18 @@ class Interpreter:
         arguments=[]
         for argument in expr.arguments:
             arguments.append(self.evaluate(argument))
-        return callee.call(self,arguments)      
+        return callee.call(self,arguments)  
+    def visit_function_stmt(self, stmt):
+        function = LoxFunction(stmt, self.enviroment)
+        self.enviroment.define(stmt.name.lexeme, function)
+        return None
+
+    def execute_block(self, statements, environment):
+            previous = self.enviroment
+            self.enviroment = environment
+            for statement in statements:
+                self.execute(statement)
+            self.enviroment = previous    
     def formatted(self,value):
         if value is None:
             return "nil"
