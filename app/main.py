@@ -325,7 +325,7 @@ class Parser:
         return expr        
     def assignment(self):
         # expr=self.equal_equal()
-        expr=self.call()
+        expr=self.equal_equal()
         if self.match("EQUAL"):
             equals=self.previous()
             value=self.assignment()
