@@ -444,7 +444,6 @@ class Parser:
         self.consume("SEMICOLON","expect ;")
         return vardec_stmt(name,initializer) 
     def expression(self):
-        # return self.assignment()
         return self.call()
     def equal_equal(self):
         expr=self.addition()
@@ -482,9 +481,14 @@ class Parser:
             return Unary(operator, right)   
         return self.primary()      
     def call(self):
-        expr = self.primary()
-        while self.match("LEFT_PAREN"):
-            expr = self.finish_call(expr)
+        expr = self.assignment()
+        
+        while True:
+            if self.match("LEFT_PAREN"):
+                expr = self.finish_call(expr)
+            else:
+                break
+        
         return expr 
     def primary(self):
         
@@ -500,10 +504,7 @@ class Parser:
             return Literal(self.previous().literal)  # Pass the literal value
         # Handle other literals and expressions...
         if self.match("IDENTIFIER"):
-            expr=Variable(self.previous())
-            while self.match("LEFT_PAREN"):
-                expr=self.finish_call(expr)
-            return expr
+            return Variable(self.previous())
 
         if self.match("LEFT_PAREN"):
             expr=self.expression()
@@ -551,9 +552,11 @@ class Parser:
         self.error(self.peek(),message)    
 
     def error(self, token, message):
+        # Don't throw parse errors for runtime issues
+        if not isinstance(token, Token):
+            return RuntimeError(message)
         print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
-        return Exception()
-        #raise Exception(f"[line {token.line}] Error at '{token.lexeme}': {message}")
+        return RuntimeError(message)
 
 class Expr:
     def accept(self, visitor):
@@ -776,18 +779,18 @@ def main():
              result = printer.print(stmt)
              print(result)
     elif command=="evaluate" or command=="run":
-        tokens = tokenize(file_contents)
-        parser = Parser(tokens)
-        expression = parser.parse()
-        if expression is None:
-          exit(65)
-        enviroment=global_env 
-        if command=="evaluate":
-            interpreter=Interpreter("evaluate",enviroment)
+        try:
+            tokens = tokenize(file_contents)
+            parser = Parser(tokens)
+            expression = parser.parse()
+            if expression is None:
+                exit(65)
+            interpreter = Interpreter("run", global_env)
             interpreter.interpret(expression)
-        elif command=="run":
-            interpreter=Interpreter("run",enviroment)
-            interpreter.interpret(expression)   
+        except RuntimeError:
+            exit(70)
+        except Exception:
+            exit(65)
 
 
 if __name__ == "__main__":
