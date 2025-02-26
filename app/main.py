@@ -452,10 +452,7 @@ class Parser:
         self.consume("SEMICOLON","expect ;")
         return vardec_stmt(name,initializer) 
     def expression(self):
-        try:
-            return self.call()
-        except Exception:
-            raise RuntimeError("Invalid expression")
+        return self.assignment()
     def equal_equal(self):
         expr=self.comparison()
         while self.match("EQUAL_EQUAL","BANG_EQUAL"):
@@ -492,9 +489,11 @@ class Parser:
             return Unary(operator, right)   
         return self.primary()      
     def call(self):
-        expr = self.or_expr()
+        expr = self.primary()  # Start with primary
+        
         while self.match("LEFT_PAREN"):
             expr = self.finish_call(expr)
+        
         return expr
     def primary(self):
         if self.match("TRUE"): return Literal(True)
@@ -508,8 +507,7 @@ class Parser:
             self.consume("RIGHT_PAREN", "Expected ')' after expression")
             return Grouping(expr)
         
-        # Don't throw runtime error here, just return None
-        return None
+        raise RuntimeError("Expected expression")
 
     def finish_call(self, callee):
         arguments = []
@@ -787,10 +785,11 @@ def main():
             interpreter = Interpreter("run", global_env)
             try:
                 interpreter.interpret(statements)
-            except:
+            except Exception as e:
                 exit(70)  # Runtime error
         except RuntimeError:
-            exit(70)  # Also runtime error
+            # Explicitly handle RuntimeError as a runtime error
+            exit(70)
         except:
             exit(65)  # Parse error
 
