@@ -334,7 +334,7 @@ class Parser:
                self.error(equals,"Invalid assignment")
         return expr 
     def equality(self):
-        expr = self.comparison()  # Parse a call, which handles function-call chaining.
+        expr = self.call()  # Parse a call, which handles function-call chaining.
         while self.match("EQUAL_EQUAL","BANG_EQUAL"):
             operator = self.previous()
             right = self.call()
