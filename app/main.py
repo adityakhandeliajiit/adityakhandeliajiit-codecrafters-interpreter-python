@@ -482,7 +482,7 @@ class Parser:
             return Unary(operator, right)   
         return self.primary()      
     def call(self):
-        expr = self.unary()
+        expr = self.or_expr()
         
         while True:
             if self.match("LEFT_PAREN"):
@@ -543,10 +543,8 @@ class Parser:
         self.error(self.peek(),message)    
 
     def error(self, token, message):
-        if not isinstance(token, Token):
-            raise RuntimeError(message)
         print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
-        raise RuntimeError(message)
+        return None  # Return None instead of raising an exception
 
 class Expr:
     def accept(self, visitor):
@@ -773,13 +771,13 @@ def main():
             tokens = tokenize(file_contents)
             parser = Parser(tokens)
             expression = parser.parse()
-            if expression is not None:
-                interpreter = Interpreter("run", global_env)
+            if expression is None:
+                exit(65)
+            interpreter = Interpreter("run", global_env)
+            try:
                 interpreter.interpret(expression)
-            else:
-                raise RuntimeError("Parse error")
-        except RuntimeError:
-            exit(70)
+            except:
+                exit(70)
         except:
             exit(65)
 
