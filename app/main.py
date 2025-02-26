@@ -451,7 +451,7 @@ class Parser:
     def expression(self):
         return self.assignment()
     def equal_equal(self):
-        expr=self.comparison()
+        expr=self.call()
         while self.match("EQUAL_EQUAL","BANG_EQUAL"):
             operator=self.previous()
             right=self.comparison()
