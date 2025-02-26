@@ -154,7 +154,7 @@ class Interpreter:
         return expr.accept(self)
     def is_truthy(self,value):
         return value is not None and value is not False
-    def visit_literal_expr(self, expr):
+    def visit_literal_expr(self,expr):
         return expr.value    
     def visit_grouping_expr(self, expr):
         return self.evaluate(expr.expression) 
@@ -273,7 +273,7 @@ class Interpreter:
     def visit_function_stmt(self, stmt):
         function = LoxFunction(stmt, self.enviroment)
         self.enviroment.define(stmt.name.lexeme, function)
-        return function  # Return the function object
+        return None
     def visit_return_stmt(self,stmt):
         value=None
         if stmt.value is not None:
@@ -559,9 +559,10 @@ class Expr:
 class Literal(Expr):
     def __init__(self, value):
         self.value = value
+        self.right = right
 
     def accept(self, visitor):
-        return visitor.visit_literal_expr(self)
+        return visitor.visit_binary_expr(self)
 
 class Grouping(Expr):
     def __init__(self, expression):
