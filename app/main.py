@@ -26,6 +26,8 @@ class LoxFunction(Callable):
 
     def arity(self):
         return len(self.declaration.params)
+    def __str__(self):
+        return "<fn " + self.declaration.name.lexeme + ">"
 
     def call(self, interpreter, arguments):
         environment = Enviroment(self.closure)
