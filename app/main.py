@@ -303,12 +303,9 @@ class Parser:
     def parse(self):
         statements = []
         while not self.is_at_end():
-            try:
-                stmt = self.statement()
-                if stmt:
-                    statements.append(stmt)
-            except RuntimeError as e:
-                return None
+            statement = self.statement()
+            if statement:
+                statements.append(statement)
         return statements
 
     def or_expr(self):
@@ -487,16 +484,11 @@ class Parser:
             return Unary(operator, right)   
         return self.primary()      
     def call(self):
-        expr = self.or_expr()
+        expr = self.primary()
+        
         while self.match("LEFT_PAREN"):
-            arguments = []
-            if not self.check("RIGHT_PAREN"):
-                while True:
-                    arguments.append(self.expression())
-                    if not self.match("COMMA"):
-                        break
-            paren = self.consume("RIGHT_PAREN", "Expected ')' after arguments")
-            expr = Call(expr, paren, arguments)
+            expr = self.finish_call(expr)
+            
         return expr
     def primary(self):
         if self.match("TRUE"): return Literal(True)
@@ -550,8 +542,8 @@ class Parser:
         self.error(self.peek(),message)    
 
     def error(self, token, message):
-        if isinstance(token, Token):
-            print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
+        # Don't throw any exceptions, just print the error
+        print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
         return None
 
 class Expr:
@@ -770,15 +762,19 @@ def main():
         try:
             tokens = tokenize(file_contents)
             parser = Parser(tokens)
-            expression = parser.parse()
-            if expression is None:
+            statements = parser.parse()
+            
+            if statements is None:
                 exit(65)
+            
             interpreter = Interpreter("run", global_env)
             try:
-                interpreter.interpret(expression)
-            except:
+                interpreter.interpret(statements)
+            except Exception as e:
+                # Any interpreter error should exit with 70
                 exit(70)
-        except:
+        except Exception as e:
+            # Parser errors exit with 65
             exit(65)
 
 
