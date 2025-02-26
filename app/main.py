@@ -302,13 +302,15 @@ class Parser:
 
     def parse(self):
         statements = []
-        try:
-            while not self.is_at_end():
-                statements.append(self.statement())
-            return statements
-        except Exception as e:
-            self.error(self.peek(), str(e))
-            return None
+        while not self.is_at_end():
+            try:
+                stmt = self.statement()
+                if stmt:
+                    statements.append(stmt)
+            except RuntimeError as e:
+                return None
+        return statements
+
     def or_expr(self):
         expr = self.and_expr()  # Assume you have and_expr() for higher precedence (or use equal_equal() if no "and").
         while self.match("OR"):
@@ -445,7 +447,10 @@ class Parser:
         self.consume("SEMICOLON","expect ;")
         return vardec_stmt(name,initializer) 
     def expression(self):
-        return self.call()
+        try:
+            return self.call()
+        except Exception:
+            raise RuntimeError("Invalid expression")
     def equal_equal(self):
         expr=self.comparison()
         while self.match("EQUAL_EQUAL","BANG_EQUAL"):
@@ -483,14 +488,16 @@ class Parser:
         return self.primary()      
     def call(self):
         expr = self.or_expr()
-        
-        while True:
-            if self.match("LEFT_PAREN"):
-                expr = self.finish_call(expr)
-            else:
-                break
-        
-        return expr 
+        while self.match("LEFT_PAREN"):
+            arguments = []
+            if not self.check("RIGHT_PAREN"):
+                while True:
+                    arguments.append(self.expression())
+                    if not self.match("COMMA"):
+                        break
+            paren = self.consume("RIGHT_PAREN", "Expected ')' after arguments")
+            expr = Call(expr, paren, arguments)
+        return expr
     def primary(self):
         if self.match("TRUE"): return Literal(True)
         if self.match("FALSE"): return Literal(False)
@@ -543,8 +550,9 @@ class Parser:
         self.error(self.peek(),message)    
 
     def error(self, token, message):
-        print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
-        return None  # Return None instead of raising an exception
+        if isinstance(token, Token):
+            print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
+        return None
 
 class Expr:
     def accept(self, visitor):
@@ -553,14 +561,6 @@ class Expr:
 class Literal(Expr):
     def __init__(self, value):
         self.value = value
-
-    def accept(self, visitor):
-        return visitor.visit_literal_expr(self)
-
-class Binary(Expr):
-    def __init__(self, left, operator, right):
-        self.left = left
-        self.operator = operator
         self.right = right
 
     def accept(self, visitor):
