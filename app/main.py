@@ -256,20 +256,24 @@ class Interpreter:
         while(self.is_truthy(self.evaluate(stmt.condition))):
             self.execute(stmt.body)
         return None  
-    def visit_call_expr(self,expr):
-        callee=self.evaluate(expr.callee)
-        arguments=[]
+    def visit_call_expr(self, expr):
+        callee = self.evaluate(expr.callee)
+        arguments = []
+        
+        # First evaluate all arguments
         for argument in expr.arguments:
             arguments.append(self.evaluate(argument))
         
+        # Check if callee is callable and handle runtime error
         if not isinstance(callee, Callable):
+            # This should trigger a runtime error (70) instead of parse error
             exit(70)
-            
+        
         function = callee
         if len(arguments) != function.arity():
             exit(70)
-            
-        return function.call(self, arguments)  
+        
+        return function.call(self, arguments)
     def visit_function_stmt(self, stmt):
         function = LoxFunction(stmt, self.enviroment)
         self.enviroment.define(stmt.name.lexeme, function)
@@ -773,18 +777,19 @@ def main():
              result = printer.print(stmt)
              print(result)
     elif command=="evaluate" or command=="run":
-        tokens = tokenize(file_contents)
-        parser = Parser(tokens)
-        expression = parser.parse()
-        if expression is None:
-          exit(65)
-        enviroment=global_env 
-        if command=="evaluate":
-            interpreter=Interpreter("evaluate",enviroment)
+        try:
+            tokens = tokenize(file_contents)
+            parser = Parser(tokens)
+            expression = parser.parse()
+            if expression is None:
+                exit(65)
+            interpreter = Interpreter("run", global_env)
             interpreter.interpret(expression)
-        elif command=="run":
-            interpreter=Interpreter("run",enviroment)
-            interpreter.interpret(expression)   
+        except Exception as e:
+            # Ensure runtime errors exit with code 70
+            if isinstance(e, RuntimeError):
+                exit(70)
+            raise
 
 
 if __name__ == "__main__":
