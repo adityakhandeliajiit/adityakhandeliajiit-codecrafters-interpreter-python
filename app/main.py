@@ -687,7 +687,7 @@ def main():
         expression = parser.parse()
         if expression is None:
           exit(65)
-        enviroment=Enviroment() 
+        enviroment=global_env 
         if command=="evaluate":
             interpreter=Interpreter("evaluate",enviroment)
             interpreter.interpret(expression)
