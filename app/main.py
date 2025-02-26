@@ -309,15 +309,29 @@ class Parser:
 
     def parse(self):
         statements = []
-        while not self.is_at_end():
-            try:
-                stmt = self.statement()
-                if stmt:
-                    statements.append(stmt)
-            except Exception as e:
-                if isinstance(e, RuntimeError):
+        try:
+            while not self.is_at_end():
+                try:
+                    stmt = self.statement()
+                    if stmt:
+                        statements.append(stmt)
+                except RuntimeError as e:
+                    # Only re-raise RuntimeError - not syntax errors
                     raise e
-                return None
+                except Exception as e:
+                    # Handle syntax errors during parsing
+                    # Don't add the statement, but continue parsing
+                    self.synchronize()
+                    had_error_parse = True
+        except Exception as e:
+            # If we hit an exception that wasn't handled, mark it as a parse error
+            if not isinstance(e, RuntimeError):
+                had_error_parse = True
+            else:
+                raise e
+                
+        if had_error_parse:
+            return None
         return statements
 
     def or_expr(self):
@@ -554,12 +568,30 @@ class Parser:
     def consume(self, token_type, message):
         if self.check(token_type):
             return self.advance()
-        self.error(self.peek(),message)    
+        
+        # Mark syntax errors by printing and setting had_error_parse
+        global had_error_parse
+        self.error(self.peek(), message)
+        had_error_parse = True
+        
+        # Raise a specific SyntaxError instead of RuntimeError
+        raise SyntaxError(message)
 
     def error(self, token, message):
-        # Print error but don't exit or raise exception
         print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
         return None
+        
+    def synchronize(self):
+        """Skip tokens until we reach a statement boundary."""
+        self.advance()
+        while not self.is_at_end():
+            if self.previous().type == "SEMICOLON":
+                return
+                
+            if self.peek().type in ["CLASS", "FUN", "VAR", "FOR", "IF", "WHILE", "PRINT", "RETURN"]:
+                return
+                
+            self.advance()
 
 class Expr:
     def accept(self, visitor):
