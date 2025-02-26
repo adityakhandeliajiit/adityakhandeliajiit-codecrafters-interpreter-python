@@ -515,7 +515,7 @@ class Parser:
             self.consume("RIGHT_PAREN", "Expected ')' after expression")
             return Grouping(expr)
         
-        raise RuntimeError("Expected expression")
+        raise Exception("Expected expression")
 
     def finish_call(self, callee):
         arguments = []
