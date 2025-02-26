@@ -173,8 +173,13 @@ class Interpreter:
         right = self.evaluate(expr.right)
         op = expr.operator.lexeme
         
+        # Convert numeric values to float for consistent comparison
+        if isinstance(left, (int, float)) and isinstance(right, (int, float)):
+            left = float(left)
+            right = float(right)
+        
         if op == "+":
-            if isinstance(left, float) and isinstance(right, float):
+            if isinstance(left, (int, float)) and isinstance(right, (int, float)):
                 return float(left + right)
             if isinstance(left, str) and isinstance(right, str):
                 return str(left + right)
@@ -196,6 +201,9 @@ class Interpreter:
                 raise RuntimeError("Division by zero.")
             return float(left / right)
         elif op == "==":
+            # For numeric comparisons, compare the float values
+            if isinstance(left, (int, float)) and isinstance(right, (int, float)):
+                return abs(float(left) - float(right)) < 1e-10
             return left == right
         elif op == "!=":
             return left != right
