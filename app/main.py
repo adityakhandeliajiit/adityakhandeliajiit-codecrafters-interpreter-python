@@ -177,6 +177,9 @@ class Interpreter:
         if isinstance(left, (int, float)) and isinstance(right, (int, float)):
             left = float(left)
             right = float(right)
+            if op == "==":
+                # For comparing numbers like 55 == 55.0
+                return abs(left - right) < 1e-10
         
         if op == "+":
             if isinstance(left, (int, float)) and isinstance(right, (int, float)):
@@ -297,10 +300,12 @@ class Interpreter:
         raise Return(value)    
     def execute_block(self, statements, environment):
             previous = self.enviroment
-            self.enviroment = environment
-            for statement in statements:
-                self.execute(statement)
-            self.enviroment = previous    
+            try:
+                self.enviroment = environment
+                for statement in statements:
+                    self.execute(statement)
+            finally:
+                self.enviroment = previous    
     def formatted(self,value):
         if value is None:
             return "nil"
