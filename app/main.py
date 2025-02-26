@@ -172,22 +172,29 @@ class Interpreter:
         left = self.evaluate(expr.left)
         right = self.evaluate(expr.right)
         op = expr.operator.lexeme
+        
         if op == "+":
-            if  type(right)==bool  or type(left)==bool or (type(left)==str and type(right)!=str) or (type(right)==str and type(left)!=str): 
+            if isinstance(left, float) and isinstance(right, float):
+                return float(left + right)
+            if isinstance(left, str) and isinstance(right, str):
+                return str(left + right)
+            if type(right)==bool or type(left)==bool or (type(left)==str and type(right)!=str) or (type(right)==str and type(left)!=str): 
                 exit(70)
             return left + right
         elif op == "-":
-            if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
+            if type(right)==bool or type(right)==str or type(left)==bool or type(left)==str: 
                 exit(70)
-            return left - right
+            return float(left - right)
         elif op == "*":
-            if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
+            if type(right)==bool or type(right)==str or type(left)==bool or type(left)==str: 
                 exit(70)
-            return left * right
+            return float(left * right)
         elif op == "/":
-            if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
-             exit(70)
-            return left / right
+            if type(right)==bool or type(right)==str or type(left)==bool or type(left)==str: 
+                exit(70)
+            if right == 0:
+                raise RuntimeError("Division by zero.")
+            return float(left / right)
         elif op == "==":
             return left == right
         elif op == "!=":
@@ -262,7 +269,15 @@ class Interpreter:
         arguments=[]
         for argument in expr.arguments:
             arguments.append(self.evaluate(argument))
-        return callee.call(self,arguments)  
+        
+        if not isinstance(callee, Callable):
+            exit(70)
+            
+        function = callee
+        if len(arguments) != function.arity():
+            exit(70)
+            
+        return function.call(self, arguments)  
     def visit_function_stmt(self, stmt):
         function = LoxFunction(stmt, self.enviroment)
         self.enviroment.define(stmt.name.lexeme, function)
