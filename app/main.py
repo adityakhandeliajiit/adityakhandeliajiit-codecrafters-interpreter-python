@@ -823,7 +823,8 @@ def main():
             if statements is None:
                 exit(65)  # Parse error
             
-            interpreter = Interpreter("run", global_env)
+            # Use the correct mode based on command
+            interpreter = Interpreter(command, global_env)
             try:
                 interpreter.interpret(statements)
             except RuntimeError as e:
