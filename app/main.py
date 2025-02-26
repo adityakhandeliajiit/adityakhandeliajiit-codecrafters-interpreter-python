@@ -146,8 +146,12 @@ class Interpreter:
         self.mode=mode
         self.enviroment=enviroment
     def interpret(self,statements):
-        for stmt in statements:
-            self.execute(stmt)
+        try:
+            for stmt in statements:
+                self.execute(stmt)
+        except RuntimeError as error:
+            # Properly propagate runtime errors
+            raise error
     def accept(self,stmt):
         stmt.accept(self)     
     def execute(self,stmt):
@@ -785,15 +789,22 @@ def main():
             interpreter = Interpreter("run", global_env)
             try:
                 interpreter.interpret(statements)
-            except Exception as e:
-                # Print error message for debugging
+            except RuntimeError as e:
+                # Explicitly handle RuntimeError from the interpreter
                 print(f"Runtime error: {str(e)}", file=sys.stderr)
                 exit(70)  # Runtime error
+            except Exception as e:
+                # Handle other exceptions
+                print(f"Unexpected error: {str(e)}", file=sys.stderr)
+                exit(70)  # Runtime error
+                
         except RuntimeError as e:
-            # Print error message for debugging
+            # Handle RuntimeError from the parser
             print(f"Runtime error: {str(e)}", file=sys.stderr)
             exit(70)  # Runtime error
         except Exception as e:
+            # Handle other exceptions
+            print(f"Parse error: {str(e)}", file=sys.stderr)
             exit(65)  # Parse error
 
 
