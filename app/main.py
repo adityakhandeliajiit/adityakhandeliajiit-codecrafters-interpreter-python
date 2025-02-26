@@ -324,7 +324,7 @@ class Parser:
             expr = Logical(expr, operator, right)
         return expr        
     def assignment(self):
-        expr=self.call()
+        expr=self.equality()
         if self.match("EQUAL"):
             equals=self.previous()
             value=self.assignment()
@@ -333,6 +333,13 @@ class Parser:
             else:
                self.error(equals,"Invalid assignment")
         return expr 
+    def equality(self):
+        expr = self.call()  # Parse a call, which handles function-call chaining.
+        while self.match("EQUAL_EQUAL", "BANG_EQUAL"):
+            operator = self.previous()
+            right = self.call()
+            expr = Binary(expr, operator, right)
+        return expr
     def block(self):
        statements = []
        while not self.check("RIGHT_BRACE") and not self.is_at_end():
