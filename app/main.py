@@ -354,15 +354,6 @@ class Parser:
             initializer=self.expression()
         self.consume("SEMICOLON","expect ;")
         return vardec_stmt(name,initializer) 
-    def finish_call(self, callee):
-        arguments = []
-        if not self.check("RIGHT_PAREN"):
-            while True:
-                arguments.append(self.expression())
-                if not self.match("COMMA"):
-                    break
-        paren = self.consume("RIGHT_PAREN", "Expect ')' after arguments.")
-        return Call(callee, paren, arguments) 
     def expression(self):
         return self.assignment()
     def equal_equal(self):
@@ -426,7 +417,15 @@ class Parser:
               raise Exception("Expected ')' after expression")
             return Grouping(expr)  
         raise Exception("Expected expression")
-
+    def finish_call(self, callee):
+        arguments = []
+        if not self.check("RIGHT_PAREN"):
+            while True:
+                arguments.append(self.expression())
+                if not self.match("COMMA"):
+                    break
+        paren = self.consume("RIGHT_PAREN", "Expect ')' after arguments.")
+        return Call(callee, paren, arguments) 
     def match(self, *types):
         for type in types:
             if self.check(type):
