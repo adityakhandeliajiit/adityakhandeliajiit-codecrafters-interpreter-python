@@ -335,7 +335,7 @@ class Parser:
         return expr 
     def equality(self):
         expr = self.call()  # Parse a call, which handles function-call chaining.
-        while self.match("EQUAL_EQUAL", "BANG_EQUAL"):
+        while self.match("EQUAL_EQUAL"):
             operator = self.previous()
             right = self.call()
             expr = Binary(expr, operator, right)
