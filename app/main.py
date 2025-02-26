@@ -265,11 +265,11 @@ class Interpreter:
             arguments.append(self.evaluate(argument))
         
         if not isinstance(callee, Callable):
-            exit(70)
+            raise RuntimeError(f"Can only call functions and classes.")
             
         function = callee
         if len(arguments) != function.arity():
-            exit(70)
+            raise RuntimeError(f"Expected {function.arity()} arguments but got {len(arguments)}.")
             
         return function.call(self, arguments)  
     def visit_function_stmt(self, stmt):
@@ -786,11 +786,14 @@ def main():
             try:
                 interpreter.interpret(statements)
             except Exception as e:
+                # Print error message for debugging
+                print(f"Runtime error: {str(e)}", file=sys.stderr)
                 exit(70)  # Runtime error
-        except RuntimeError:
-            # Explicitly handle RuntimeError as a runtime error
-            exit(70)
-        except:
+        except RuntimeError as e:
+            # Print error message for debugging
+            print(f"Runtime error: {str(e)}", file=sys.stderr)
+            exit(70)  # Runtime error
+        except Exception as e:
             exit(65)  # Parse error
 
 
