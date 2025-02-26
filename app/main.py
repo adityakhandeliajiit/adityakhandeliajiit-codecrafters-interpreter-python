@@ -5,6 +5,16 @@ import time
 
 had_error_parse = False
 had_error_evaluate=False
+class Return(Exception):
+    def __init__(self, value):
+        self.value=value
+class ReturnStmt:
+    def __init__(self, keyword, value):
+        self.keyword = keyword  # the 'return' token
+        self.value = value      # the return expression (can be None)
+    
+    def accept(self, visitor):
+        return visitor.visit_return_stmt(self)
 class Callable:
     def arity(self):
         pass
@@ -34,7 +44,10 @@ class LoxFunction(Callable):
         for i, param in enumerate(self.declaration.params):
             environment.define(param.lexeme, arguments[i])
         # Execute the function body (which is a block statement).
-        interpreter.execute_block(self.declaration.body.statement, environment)
+        try:
+            interpreter.execute_block(self.declaration.body.statement, environment)
+        except Return as ret:
+            return ret.value
         return None    
 class Clock(Callable):
     def arity(self):
@@ -153,7 +166,6 @@ class Interpreter:
             return -right
         elif expr.operator.lexeme == "!":
             return not right
-        # For other unary operators, add more branches as needed.
         return None
     
     def visit_binary_expr(self, expr):
@@ -255,7 +267,11 @@ class Interpreter:
         function = LoxFunction(stmt, self.enviroment)
         self.enviroment.define(stmt.name.lexeme, function)
         return None
-
+    def visit_return_stmt(self,stmt):
+        value=None
+        if stmt.value is not None:
+            value=self.evaluate(stmt.value)
+        raise Return(value)    
     def execute_block(self, statements, environment):
             previous = self.enviroment
             self.enviroment = environment
@@ -369,8 +385,17 @@ class Parser:
         self.consume("RIGHT_PAREN", "Expect ')' after parameters.")
         self.consume("LEFT_BRACE", "Expect '{' before function body.")
         body = self.block()  
-        return FunctionStmt(name, parameters, body)                        
+        return FunctionStmt(name, parameters, body) 
+    def ret_stmt(self):
+        keyword=self.previous()
+        value=None
+        if not self.check("SEMICOLON"):
+            value=self.expression()
+        self.consume("SEMICOLON","Expected ';' after variable")
+        return ReturnStmt(keyword,value)                           
     def statement(self):
+        if self.match("RETURN"):
+            return self.ret_stmt()
         if self.match("FUN"):
             return self.function_declaration()
         if self.match("FOR"):
