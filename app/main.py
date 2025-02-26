@@ -444,7 +444,8 @@ class Parser:
         self.consume("SEMICOLON","expect ;")
         return vardec_stmt(name,initializer) 
     def expression(self):
-        return self.assignment()
+        # return self.assignment()
+        return self.call()
     def equal_equal(self):
         expr=self.addition()
         while self.match("EQUAL_EQUAL","BANG_EQUAL"):
