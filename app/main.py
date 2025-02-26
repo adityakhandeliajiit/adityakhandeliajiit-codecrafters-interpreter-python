@@ -335,7 +335,8 @@ class Parser:
             expr = Logical(expr, operator, right)
         return expr        
     def assignment(self):
-        expr = self.call()
+        expr = self.or_expr()  # Call or_expr instead of call()
+        
         if self.match("EQUAL"):
             equals = self.previous()
             value = self.assignment()
@@ -492,11 +493,14 @@ class Parser:
             return Unary(operator, right)   
         return self.primary()      
     def call(self):
-        expr = self.primary()  # Start with primary
+        expr = self.primary()
         
-        while self.match("LEFT_PAREN"):
-            expr = self.finish_call(expr)
-        
+        while True:
+            if self.match("LEFT_PAREN"):
+                expr = self.finish_call(expr)
+            else:
+                break
+                
         return expr
     def primary(self):
         if self.match("TRUE"): return Literal(True)
