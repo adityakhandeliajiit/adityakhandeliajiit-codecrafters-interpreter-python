@@ -1,9 +1,20 @@
 import sys
 import re
-
+import time
 # Global error flag.
+
 had_error_parse = False
 had_error_evaluate=False
+class Callable:
+    def arity(self):
+        pass
+    def call(self,interpreter,arguments):
+        pass
+class Clock(Callable):
+    def arity(self):
+        return 0
+    def call(self, interpreter, arguments):
+        return time.time()    
 class Logical:
     def __init__(self,left,operator,right):
         self.left=left
@@ -79,7 +90,16 @@ class vardec_stmt:
         self.initializer=initializer
     def accept(self,visitor):
         return visitor.visit_vardec_stmt(self)    
-        
+global_env = Enviroment()
+global_env.define("clock", Clock())
+class Call:
+    def __init__(self,callee,paren,arguments):
+        self.callee=callee
+        self.paren=paren
+        self.arguments=arguments
+    def accept(self,visitor):
+        return visitor.visit_call_expr(self)
+    
 class Interpreter:
     def __init__(self,mode,enviroment):
         self.mode=mode
@@ -198,7 +218,13 @@ class Interpreter:
     def visit_while_stmt(self,stmt):
         while(self.is_truthy(self.evaluate(stmt.condition))):
             self.execute(stmt.body)
-        return None    
+        return None  
+    def visit_call_expr(self,expr):
+        callee=self.evaluate(expr.callee)
+        arguments=[]
+        for argument in expr.arguments:
+            arguments.append(self.evaluate(argument))
+        return callee.call(self,argument)      
     def formatted(self,value):
         if value is None:
             return "nil"
