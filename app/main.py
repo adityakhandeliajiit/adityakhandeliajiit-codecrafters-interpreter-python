@@ -256,24 +256,20 @@ class Interpreter:
         while(self.is_truthy(self.evaluate(stmt.condition))):
             self.execute(stmt.body)
         return None  
-    def visit_call_expr(self, expr):
-        callee = self.evaluate(expr.callee)
-        arguments = []
-        
-        # First evaluate all arguments
+    def visit_call_expr(self,expr):
+        callee=self.evaluate(expr.callee)
+        arguments=[]
         for argument in expr.arguments:
             arguments.append(self.evaluate(argument))
         
-        # Check if callee is callable and handle runtime error
         if not isinstance(callee, Callable):
-            # This should trigger a runtime error (70) instead of parse error
             exit(70)
-        
+            
         function = callee
         if len(arguments) != function.arity():
             exit(70)
-        
-        return function.call(self, arguments)
+            
+        return function.call(self, arguments)  
     def visit_function_stmt(self, stmt):
         function = LoxFunction(stmt, self.enviroment)
         self.enviroment.define(stmt.name.lexeme, function)
@@ -328,17 +324,15 @@ class Parser:
             expr = Logical(expr, operator, right)
         return expr        
     def assignment(self):
-        expr = self.or_expr()  # Changed from call() to or_expr()
-        
+        expr=self.call()
         if self.match("EQUAL"):
-            equals = self.previous()
-            value = self.assignment()
-            
-            if isinstance(expr, Variable):
-                return assignment(expr.name, value)
-            self.error(equals, "Invalid assignment target.")
-            
-        return expr
+            equals=self.previous()
+            value=self.assignment()
+            if isinstance(expr,Variable):
+               return assignment(expr.name,value)
+            else:
+               self.error(equals,"Invalid assignment")
+        return expr 
     def block(self):
        statements = []
        while not self.check("RIGHT_BRACE") and not self.is_at_end():
@@ -448,7 +442,7 @@ class Parser:
         self.consume("SEMICOLON","expect ;")
         return vardec_stmt(name,initializer) 
     def expression(self):
-        return self.or_expr()
+        return self.assignment()
     def equal_equal(self):
         expr=self.comparison()
         while self.match("EQUAL_EQUAL","BANG_EQUAL"):
@@ -486,14 +480,9 @@ class Parser:
         return self.primary()      
     def call(self):
         expr = self.primary()
-
-        while True:
-            if self.match("LEFT_PAREN"):
-                expr = self.finish_call(expr)
-            else:
-                break
-                
-        return expr
+        while self.match("LEFT_PAREN"):
+            expr = self.finish_call(expr)
+        return expr 
     def primary(self):
         
         if self.match("TRUE"):
@@ -784,19 +773,18 @@ def main():
              result = printer.print(stmt)
              print(result)
     elif command=="evaluate" or command=="run":
-        try:
-            tokens = tokenize(file_contents)
-            parser = Parser(tokens)
-            expression = parser.parse()
-            if expression is None:
-                exit(65)
-            interpreter = Interpreter("run", global_env)
+        tokens = tokenize(file_contents)
+        parser = Parser(tokens)
+        expression = parser.parse()
+        if expression is None:
+          exit(65)
+        enviroment=global_env 
+        if command=="evaluate":
+            interpreter=Interpreter("evaluate",enviroment)
             interpreter.interpret(expression)
-        except Exception as e:
-            # Ensure runtime errors exit with code 70
-            if isinstance(e, RuntimeError):
-                exit(70)
-            raise
+        elif command=="run":
+            interpreter=Interpreter("run",enviroment)
+            interpreter.interpret(expression)   
 
 
 if __name__ == "__main__":
