@@ -308,16 +308,29 @@ class Parser:
         self.current = 0
 
     def parse(self):
+        global had_error_parse
         statements = []
-        while not self.is_at_end():
-            try:
-                stmt = self.statement()
-                if stmt:
-                    statements.append(stmt)
-            except Exception as e:
-                if isinstance(e, RuntimeError):
-                    raise e
-                return None
+        try:
+            while not self.is_at_end():
+                try:
+                    stmt = self.statement()
+                    if stmt:
+                        statements.append(stmt)
+                except Exception as e:
+                    # Only re-raise RuntimeError - not syntax errors
+                    if isinstance(e, RuntimeError):
+                        raise e
+                    else:
+                        had_error_parse = True
+                        self.synchronize()
+        except Exception as e:
+            if isinstance(e, RuntimeError):
+                raise e
+            else:
+                had_error_parse = True
+                
+        if had_error_parse:
+            return None
         return statements
 
     def or_expr(self):
@@ -552,9 +565,29 @@ class Parser:
     def previous(self):
         return self.tokens[self.current - 1]
     def consume(self, token_type, message):
+        global had_error_parse
         if self.check(token_type):
             return self.advance()
-        self.error(self.peek(),message)    
+        
+        # Mark syntax errors
+        had_error_parse = True
+        self.error(self.peek(), message)
+        
+        # Skip token to try to continue parsing
+        self.synchronize()
+        return None
+    
+    def synchronize(self):
+        """Skip tokens until we reach a statement boundary."""
+        self.advance()
+        while not self.is_at_end():
+            if self.previous().type == "SEMICOLON":
+                return
+                
+            if self.peek().type in ["CLASS", "FUN", "VAR", "FOR", "IF", "WHILE", "PRINT", "RETURN"]:
+                return
+                
+            self.advance()
 
     def error(self, token, message):
         # Print error but don't exit or raise exception
