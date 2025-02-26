@@ -491,7 +491,8 @@ class Parser:
             operator = self.previous()
             right = self.unary()
             return Unary(operator, right)   
-        return self.primary()      
+        return self.call()  # Call call() instead of primary()
+        
     def call(self):
         expr = self.primary()  # Get the primary expression
         
@@ -812,3 +813,4 @@ def main():
 
 
     main()
+
