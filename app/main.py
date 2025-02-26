@@ -224,7 +224,7 @@ class Interpreter:
         arguments=[]
         for argument in expr.arguments:
             arguments.append(self.evaluate(argument))
-        return callee.call(self,argument)      
+        return callee.call(self,arguments)      
     def formatted(self,value):
         if value is None:
             return "nil"
