@@ -167,64 +167,6 @@ class Interpreter:
         elif expr.operator.lexeme == "!":
             return not right
         return None
-    
-    # def visit_binary_expr(self, expr):
-    #     left = self.evaluate(expr.left)
-    #     right = self.evaluate(expr.right)
-    #     op = expr.operator.lexeme
-        
-    #     # Convert numeric values to float for consistent comparison
-    #     if isinstance(left, (int, float)) and isinstance(right, (int, float)):
-    #         left = float(left)
-    #         right = float(right)
-    #         if op == "==":
-    #             # For comparing numbers like 55 == 55.0
-    #             return abs(left - right) < 1e-10
-        
-    #     if op == "+":
-    #         if isinstance(left, (int, float)) and isinstance(right, (int, float)):
-    #             return float(left + right)
-    #         if isinstance(left, str) and isinstance(right, str):
-    #             return str(left + right)
-    #         if type(right)==bool or type(left)==bool or (type(left)==str and type(right)!=str) or (type(right)==str and type(left)!=str): 
-    #             exit(70)
-    #         return left + right
-    #     elif op == "-":
-    #         if type(right)==bool or type(right)==str or type(left)==bool or type(left)==str: 
-    #             exit(70)
-    #         return float(left - right)
-    #     elif op == "*":
-    #         if type(right)==bool or type(right)==str or type(left)==bool or type(left)==str: 
-    #             exit(70)
-    #     elif op == "/":
-    #         if type(right)==bool or type(right)==str or type(left)==bool or type(left)==str: 
-    #             exit(70)
-    #         if right == 0:
-    #             raise RuntimeError("Division by zero.")
-    #         return float(left / right)
-    #     elif op == "==":
-    #         # For numeric comparisons, compare the float values
-    #         if isinstance(left, (int, float)) and isinstance(right, (int, float)):
-    #             return abs(float(left) - float(right)) < 1e-10
-    #         return left == right
-    #     elif op == "!=":
-    #         return left != right
-    #     elif op == "<":
-    #         if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
-    #             exit(70)
-    #         return left < right
-    #     elif op == "<=":
-    #         if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
-    #             exit(70)
-    #         return left <= right
-    #     elif op == ">":
-    #         if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
-    #             exit(70)
-    #         return left > right
-    #     elif op == ">=":
-    #         if  type(right)==bool or type(right)==str or type(left)==bool or type(left)==str : 
-    #             exit(70)
-    #         return left >= right   
     def visit_binary_expr(self, expr):
         left = self.evaluate(expr.left)
         right = self.evaluate(expr.right)
@@ -382,7 +324,7 @@ class Parser:
             expr = Logical(expr, operator, right)
         return expr        
     def assignment(self):
-        expr=self.or_expr()
+        expr=self.call()
         if self.match("EQUAL"):
             equals=self.previous()
             value=self.assignment()
@@ -536,7 +478,11 @@ class Parser:
             right = self.unary()
             return Unary(operator, right)   
         return self.primary()      
-
+    def call(self):
+        expr = self.primary()
+        while self.match("LEFT_PAREN"):
+            expr = self.finish_call(expr)
+        return expr 
     def primary(self):
         
         if self.match("TRUE"):
