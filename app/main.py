@@ -324,15 +324,16 @@ class Parser:
             expr = Logical(expr, operator, right)
         return expr        
     def assignment(self):
-        # expr=self.equal_equal()
-        expr=self.equal_equal()
+        expr = self.or_expr()
+        
         if self.match("EQUAL"):
-            equals=self.previous()
-            value=self.assignment()
-            if isinstance(expr,Variable):
-               return assignment(expr.name,value)
-            else:
-               self.error(equals,"Invalid assignment")
+            equals = self.previous()
+            value = self.assignment()
+            
+            if isinstance(expr, Variable):
+                return assignment(expr.name, value)
+            self.error(equals, "Invalid assignment target.")
+            
         return expr 
     
     def block(self):
@@ -444,9 +445,9 @@ class Parser:
         self.consume("SEMICOLON","expect ;")
         return vardec_stmt(name,initializer) 
     def expression(self):
-        return self.call()
+        return self.assignment()
     def equal_equal(self):
-        expr=self.addition()
+        expr=self.comparison()
         while self.match("EQUAL_EQUAL","BANG_EQUAL"):
             operator=self.previous()
             right=self.comparison()
@@ -481,7 +482,7 @@ class Parser:
             return Unary(operator, right)   
         return self.primary()      
     def call(self):
-        expr = self.assignment()
+        expr = self.primary()
         
         while True:
             if self.match("LEFT_PAREN"):
