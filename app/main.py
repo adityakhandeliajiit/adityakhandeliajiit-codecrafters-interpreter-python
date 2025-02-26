@@ -228,14 +228,14 @@ class Interpreter:
     def visit_variable_expr(self, expr):
         try:
             return self.enviroment.get(expr.name.lexeme)
-        except RuntimeError:
-            exit(70)
+        except RuntimeError as e:
+            raise e  # Properly raise the RuntimeError instead of using exit()
     def visit_assign_expr(self, expr):
         value = self.evaluate(expr.value)
         try:
             self.enviroment.assign(expr.name.lexeme,value)
-        except RuntimeError:
-            exit(70)  
+        except RuntimeError as e:
+            raise e  # Properly raise the RuntimeError instead of using exit()
         return value   
     def visit_block_stmt(self,stmt):
         previous=self.enviroment
@@ -811,5 +811,4 @@ def main():
             exit(65)  # Parse error
 
 
-if __name__ == "__main__":
     main()
