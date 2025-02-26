@@ -811,6 +811,6 @@ def main():
             print(f"Parse error: {str(e)}", file=sys.stderr)
             exit(65)  # Parse error
 
-
+if __name__ == "__main__":
     main()
 
