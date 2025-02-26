@@ -328,7 +328,7 @@ class Parser:
             expr = Logical(expr, operator, right)
         return expr  
     def and_expr(self):
-        expr = self.equal_equal()  # Assume you have and_expr() for higher precedence (or use equal_equal() if no "and").
+        expr = self.equal_equal()
         while self.match("AND"):
             operator = self.previous()
             right = self.equal_equal()
@@ -493,7 +493,7 @@ class Parser:
             return Unary(operator, right)   
         return self.primary()      
     def call(self):
-        expr = self.primary()
+        expr = self.primary()  # Get the primary expression
         
         while True:
             if self.match("LEFT_PAREN"):
