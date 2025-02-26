@@ -10,6 +10,30 @@ class Callable:
         pass
     def call(self,interpreter,arguments):
         pass
+class FunctionStmt:
+    def __init__(self, name, params, body):
+        self.name = name      
+        self.params = params  
+        self.body = body      
+
+    def accept(self, visitor):
+        return visitor.visit_function_stmt(self)
+
+class LoxFunction(Callable):
+    def __init__(self, declaration, closure):
+        self.declaration = declaration  
+        self.closure = closure          
+
+    def arity(self):
+        return len(self.declaration.params)
+
+    def call(self, interpreter, arguments):
+        environment = Enviroment(self.closure)
+        for i, param in enumerate(self.declaration.params):
+            environment.define(param.lexeme, arguments[i])
+        # Execute the function body (which is a block statement).
+        interpreter.execute_block(self.declaration.body.statement, environment)
+        return None    
 class Clock(Callable):
     def arity(self):
         return 0
@@ -318,10 +342,24 @@ class Parser:
         body=while_exp(condition,body)    
         if initializer is not None:
             body=BlockStmt([initializer,body])
-        return body                           
+        return body   
+    def function_declaration(self):
+        # Assumes you have already consumed the 'FUN' token.
+        name = self.consume("IDENTIFIER", "Expect function name.")
+        self.consume("LEFT_PAREN", "Expect '(' after function name.")
+        parameters = []
+        if not self.check("RIGHT_PAREN"):
+            while True:
+                parameters.append(self.consume("IDENTIFIER", "Expect parameter name."))
+                if not self.match("COMMA"):
+                    break
+        self.consume("RIGHT_PAREN", "Expect ')' after parameters.")
+        self.consume("LEFT_BRACE", "Expect '{' before function body.")
+        body = self.block()  
+        return FunctionStmt(name, parameters, body)                        
     def statement(self):
         if self.match("FUN"):
-            return self.finish_call()
+            return self.function_declaration()
         if self.match("FOR"):
             return self.for_stmt()
         if self.match("WHILE"):
