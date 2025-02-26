@@ -353,7 +353,16 @@ class Parser:
         if self.match("EQUAL"):
             initializer=self.expression()
         self.consume("SEMICOLON","expect ;")
-        return vardec_stmt(name,initializer)  
+        return vardec_stmt(name,initializer) 
+    def finish_call(self, callee):
+        arguments = []
+        if not self.check("RIGHT_PAREN"):
+            while True:
+                arguments.append(self.expression())
+                if not self.match("COMMA"):
+                    break
+        paren = self.consume("RIGHT_PAREN", "Expect ')' after arguments.")
+        return Call(callee, paren, arguments) 
     def expression(self):
         return self.assignment()
     def equal_equal(self):
@@ -393,6 +402,7 @@ class Parser:
         return self.primary()      
 
     def primary(self):
+        
         if self.match("TRUE"):
             return Literal(True)
         if self.match("FALSE"):
@@ -405,7 +415,10 @@ class Parser:
             return Literal(self.previous().literal)  # Pass the literal value
         # Handle other literals and expressions...
         if self.match("IDENTIFIER"):
-            return Variable(self.previous())
+            expr=Variable(self.previous())
+            while self.match("LEFT_PAREN"):
+                expr=self.finish_call(expr)
+            return expr
 
         if self.match("LEFT_PAREN"):
             expr=self.expression()
