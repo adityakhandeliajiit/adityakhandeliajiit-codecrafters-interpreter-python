@@ -445,7 +445,7 @@ class Parser:
         self.consume("SEMICOLON","expect ;")
         return vardec_stmt(name,initializer) 
     def expression(self):
-        return self.or_expr()
+        return self.call()
     def equal_equal(self):
         expr=self.comparison()
         while self.match("EQUAL_EQUAL","BANG_EQUAL"):
@@ -492,29 +492,17 @@ class Parser:
         
         return expr 
     def primary(self):
-        
-        if self.match("TRUE"):
-            expr = Literal(True)
-        elif self.match("FALSE"):
-            expr = Literal(False)
-        elif self.match("NIL"):
-            expr = Literal(None)
-        elif self.match("NUMBER"):
-            expr = Literal(self.previous().literal)
-        elif self.match("STRING"):
-            expr = Literal(self.previous().literal)  # Pass the literal value
-        # Handle other literals and expressions...
-        elif self.match("IDENTIFIER"):
-            expr = Variable(self.previous())
-
-        elif self.match("LEFT_PAREN"):
-            expr=self.expression()
-            if not self.match("RIGHT_PAREN"):
-              raise Exception("Expected ')' after expression")
-            expr = Grouping(expr)  
-        else:
-            raise Exception("Expected expression")
-        return expr
+        if self.match("TRUE"): return Literal(True)
+        if self.match("FALSE"): return Literal(False)
+        if self.match("NIL"): return Literal(None)
+        if self.match("NUMBER"): return Literal(self.previous().literal)
+        if self.match("STRING"): return Literal(self.previous().literal)
+        if self.match("IDENTIFIER"): return Variable(self.previous())
+        if self.match("LEFT_PAREN"):
+            expr = self.expression()
+            self.consume("RIGHT_PAREN", "Expected ')' after expression")
+            return Grouping(expr)
+        raise RuntimeError("Expected expression")
     def finish_call(self, callee):
         arguments = []
         if not self.check("RIGHT_PAREN"):
@@ -523,7 +511,7 @@ class Parser:
                 if not self.match("COMMA"):
                     break
         paren = self.consume("RIGHT_PAREN", "Expect ')' after arguments.")
-        return Call(callee, paren, arguments) 
+        return Call(callee, paren, arguments)
     def match(self, *types):
         for type in types:
             if self.check(type):
@@ -555,11 +543,10 @@ class Parser:
         self.error(self.peek(),message)    
 
     def error(self, token, message):
-        # Don't throw parse errors for runtime issues
         if not isinstance(token, Token):
-            return RuntimeError(message)
+            raise RuntimeError(message)
         print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
-        return RuntimeError(message)
+        raise RuntimeError(message)
 
 class Expr:
     def accept(self, visitor):
@@ -786,14 +773,14 @@ def main():
             tokens = tokenize(file_contents)
             parser = Parser(tokens)
             expression = parser.parse()
-            if expression is None:
-                exit(65)
-            interpreter = Interpreter("run", global_env)
-            interpreter.interpret(expression)
+            if expression is not None:
+                interpreter = Interpreter("run", global_env)
+                interpreter.interpret(expression)
+            else:
+                raise RuntimeError("Parse error")
         except RuntimeError:
             exit(70)
-        except Exception as e:
-            print(f"[line 1] Error at ')':", str(e), file=sys.stderr)
+        except:
             exit(65)
 
 
