@@ -445,7 +445,7 @@ class Parser:
         self.consume("SEMICOLON","expect ;")
         return vardec_stmt(name,initializer) 
     def expression(self):
-        return self.assignment()
+        return self.or_expr()
     def equal_equal(self):
         expr=self.comparison()
         while self.match("EQUAL_EQUAL","BANG_EQUAL"):
@@ -482,7 +482,7 @@ class Parser:
             return Unary(operator, right)   
         return self.primary()      
     def call(self):
-        expr = self.primary()
+        expr = self.unary()
         
         while True:
             if self.match("LEFT_PAREN"):
@@ -494,25 +494,27 @@ class Parser:
     def primary(self):
         
         if self.match("TRUE"):
-            return Literal(True)
-        if self.match("FALSE"):
-            return Literal(False)
-        if self.match("NIL"):
-            return Literal(None)
-        if self.match("NUMBER"):
-            return Literal(self.previous().literal)
-        if self.match("STRING"):
-            return Literal(self.previous().literal)  # Pass the literal value
+            expr = Literal(True)
+        elif self.match("FALSE"):
+            expr = Literal(False)
+        elif self.match("NIL"):
+            expr = Literal(None)
+        elif self.match("NUMBER"):
+            expr = Literal(self.previous().literal)
+        elif self.match("STRING"):
+            expr = Literal(self.previous().literal)  # Pass the literal value
         # Handle other literals and expressions...
-        if self.match("IDENTIFIER"):
-            return Variable(self.previous())
+        elif self.match("IDENTIFIER"):
+            expr = Variable(self.previous())
 
-        if self.match("LEFT_PAREN"):
+        elif self.match("LEFT_PAREN"):
             expr=self.expression()
             if not self.match("RIGHT_PAREN"):
               raise Exception("Expected ')' after expression")
-            return Grouping(expr)  
-        raise Exception("Expected expression")
+            expr = Grouping(expr)  
+        else:
+            raise Exception("Expected expression")
+        return expr
     def finish_call(self, callee):
         arguments = []
         if not self.check("RIGHT_PAREN"):
@@ -790,7 +792,8 @@ def main():
             interpreter.interpret(expression)
         except RuntimeError:
             exit(70)
-        except Exception:
+        except Exception as e:
+            print(f"[line 1] Error at ')':", str(e), file=sys.stderr)
             exit(65)
 
 
