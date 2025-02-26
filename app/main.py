@@ -320,6 +320,8 @@ class Parser:
             body=BlockStmt([initializer,body])
         return body                           
     def statement(self):
+        if self.match("FUN"):
+            return self.finish_call()
         if self.match("FOR"):
             return self.for_stmt()
         if self.match("WHILE"):
