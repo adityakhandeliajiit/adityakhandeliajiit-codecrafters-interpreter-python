@@ -303,9 +303,14 @@ class Parser:
     def parse(self):
         statements = []
         while not self.is_at_end():
-            statement = self.statement()
-            if statement:
-                statements.append(statement)
+            try:
+                stmt = self.statement()
+                if stmt:
+                    statements.append(stmt)
+            except Exception as e:
+                if isinstance(e, RuntimeError):
+                    raise e
+                return None
         return statements
 
     def or_expr(self):
@@ -484,15 +489,13 @@ class Parser:
             return Unary(operator, right)   
         return self.primary()      
     def call(self):
-        expr = self.primary()
-        
+        expr = self.or_expr()
         while self.match("LEFT_PAREN"):
             expr = self.finish_call(expr)
-            
         return expr
     def primary(self):
         if self.match("TRUE"): return Literal(True)
-        if self.match("FALSE"): return Literal(False)
+        if self.match("FALSE"): return Literal(False)  
         if self.match("NIL"): return Literal(None)
         if self.match("NUMBER"): return Literal(self.previous().literal)
         if self.match("STRING"): return Literal(self.previous().literal)
@@ -501,7 +504,10 @@ class Parser:
             expr = self.expression()
             self.consume("RIGHT_PAREN", "Expected ')' after expression")
             return Grouping(expr)
-        raise RuntimeError("Expected expression")
+        
+        # Don't throw runtime error here, just return None
+        return None
+
     def finish_call(self, callee):
         arguments = []
         if not self.check("RIGHT_PAREN"):
@@ -542,7 +548,7 @@ class Parser:
         self.error(self.peek(),message)    
 
     def error(self, token, message):
-        # Don't throw any exceptions, just print the error
+        # Print error but don't exit or raise exception
         print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
         return None
 
@@ -765,17 +771,17 @@ def main():
             statements = parser.parse()
             
             if statements is None:
-                exit(65)
+                exit(65)  # Parse error
             
             interpreter = Interpreter("run", global_env)
             try:
                 interpreter.interpret(statements)
-            except Exception as e:
-                # Any interpreter error should exit with 70
-                exit(70)
-        except Exception as e:
-            # Parser errors exit with 65
-            exit(65)
+            except:
+                exit(70)  # Runtime error
+        except RuntimeError:
+            exit(70)  # Also runtime error
+        except:
+            exit(65)  # Parse error
 
 
 if __name__ == "__main__":
