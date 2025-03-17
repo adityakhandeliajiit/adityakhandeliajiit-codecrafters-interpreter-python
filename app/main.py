@@ -10,8 +10,8 @@ class Return(Exception):
         self.value=value
 class ReturnStmt:
     def __init__(self, keyword, value):
-        self.keyword = keyword  # the 'return' token
-        self.value = value      # the return expression (can be None)
+        self.keyword = keyword  
+        self.value = value      
     
     def accept(self, visitor):
         return visitor.visit_return_stmt(self)
@@ -44,7 +44,6 @@ class LoxFunction(Callable):
         environment = Enviroment(self.closure)
         for i, param in enumerate(self.declaration.params):
             environment.define(param.lexeme, arguments[i])
-        # Execute the function body (which is a block statement).
         try:
             interpreter.execute_block(self.declaration.body.statement, environment)
         except Return as ret:
@@ -279,7 +278,7 @@ class Interpreter:
     def visit_function_stmt(self, stmt):
         function = LoxFunction(stmt, self.enviroment)
         self.enviroment.define(stmt.name.lexeme, function)
-        return function  # Return the function itself
+        return function 
         
     def visit_return_stmt(self, stmt):
         value = None
@@ -334,7 +333,7 @@ class Parser:
         return statements
 
     def or_expr(self):
-        expr = self.and_expr()  # Assume you have and_expr() for higher precedence (or use equal_equal() if no "and").
+        expr = self.and_expr()  
         while self.match("OR"):
             operator = self.previous()
             right = self.and_expr()
@@ -348,7 +347,7 @@ class Parser:
             expr = Logical(expr, operator, right)
         return expr        
     def assignment(self):
-        expr = self.or_expr()  # Call or_expr instead of call()
+        expr = self.or_expr()  
         
         if self.match("EQUAL"):
             equals = self.previous()
@@ -504,10 +503,10 @@ class Parser:
             operator = self.previous()
             right = self.unary()
             return Unary(operator, right)   
-        return self.call()  # Call call() instead of primary()
+        return self.call()  
         
     def call(self):
-        expr = self.primary()  # Get the primary expression
+        expr = self.primary() 
         
         while True:
             if self.match("LEFT_PAREN"):
@@ -569,16 +568,16 @@ class Parser:
         if self.check(token_type):
             return self.advance()
         
-        # Mark syntax errors
+        
         had_error_parse = True
         self.error(self.peek(), message)
         
-        # Skip token to try to continue parsing
+        
         self.synchronize()
         return None
     
     def synchronize(self):
-        """Skip tokens until we reach a statement boundary."""
+        
         self.advance()
         while not self.is_at_end():
             if self.previous().type == "SEMICOLON":
@@ -590,7 +589,7 @@ class Parser:
             self.advance()
 
     def error(self, token, message):
-        # Print error but don't exit or raise exception
+        
         print(f"[line {token.line}] Error at '{token.lexeme}': {message}", file=sys.stderr)
         return None
 
@@ -821,29 +820,26 @@ def main():
             statements = parser.parse()
             
             if statements is None:
-                exit(65)  # Parse error
+                exit(65)  
             
-            # Use the correct mode based on command
+            
             interpreter = Interpreter(command, global_env)
             try:
                 interpreter.interpret(statements)
             except RuntimeError as e:
-                # Explicitly handle RuntimeError from the interpreter
+                
                 print(f"Runtime error: {str(e)}", file=sys.stderr)
-                exit(70)  # Runtime error
+                exit(70)  
             except Exception as e:
-                # Handle other exceptions
                 print(f"Unexpected error: {str(e)}", file=sys.stderr)
-                exit(70)  # Runtime error
+                exit(70)  
                 
         except RuntimeError as e:
-            # Handle RuntimeError from the parser
             print(f"Runtime error: {str(e)}", file=sys.stderr)
-            exit(70)  # Runtime error
+            exit(70)  
         except Exception as e:
-            # Handle other exceptions
             print(f"Parse error: {str(e)}", file=sys.stderr)
-            exit(65)  # Parse error
+            exit(65)  
 
 if __name__ == "__main__":
     main()
